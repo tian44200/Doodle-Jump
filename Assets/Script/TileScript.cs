@@ -11,7 +11,7 @@ public class TileScript : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other) {
         Rigidbody2D doodleRB = other.transform.GetComponent<Rigidbody2D>();
 
-
+        //A corriger
         if(doodleRB.velocity.y < 0){
             doodleRB.AddForce(Vector2.up*jumpForce);
         }
