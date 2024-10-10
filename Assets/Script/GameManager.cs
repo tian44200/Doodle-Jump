@@ -21,11 +21,11 @@ public class GameManager : MonoBehaviour
 
     private void LateUpdate() {
         if(Doodle.transform.position.y > SpawnPos.y - spawnLimit){
-            SpawnPlaterform();
+            SpawnPlateform();
         }
     }
 
-    private void SpawnPlaterform(){
+    private void SpawnPlateform(){
         //Spawn between screen width and screnn height
         float xPos = Random.Range(-screenWidth,screenWidth);
         float yPos = Random.Range(minY,maxY);

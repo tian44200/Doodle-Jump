@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TileScript : MonoBehaviour
 {
-    public float jumpForce = 10;
+    public float jumpForce;
 
 
     private void OnCollisionEnter2D(Collision2D other) {
