@@ -10,7 +10,9 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         // Initially hide the lose message panel and buttons
-        loseMessagePanel.SetActive(false);
+        if(loseMessagePanel.activeSelf == true){
+            loseMessagePanel.SetActive(false);
+        }
     }
 
     public void ShowLoseMessage()
