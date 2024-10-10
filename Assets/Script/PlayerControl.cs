@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-    public Rigidbody2D rb;
+    private Rigidbody2D rb;
     public float moveSpeed = 10f;
 
     private float LeftRight;
@@ -12,6 +12,17 @@ public class PlayerControl : MonoBehaviour
     private float backgroundHalfWidth;
     public float loseThreshold; // Variable to set the lose threshold
     public GameObject uiManager; // Reference to the UIManager
+    
+    public SpriteRenderer spriteRenderer; // Reference to the player's SpriteRenderer
+    public Sprite defaultSprite; // The normal Doodle sprite
+    public Sprite shootSprite; // The sprite to use when shooting
+    public float spriteRevertDelay = 0.5f; // Time to wait before reverting back to default sprite
+    public GameObject shootImage; // Reference to the shooting image of the doodle
+
+    // Projectile-related variables
+    public GameObject projectilePrefab; // Reference to the projectile prefab
+    public Transform projectileSpawnPoint; // The point where the projectile should be spawned
+    public float projectileSpeed = 5f; // Speed at which the projectile is launched
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
@@ -20,6 +31,8 @@ public class PlayerControl : MonoBehaviour
         SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
         backgroundHalfWidth = bgRenderer.bounds.size.x / 2f;
         loseThreshold = background.position.y - bgRenderer.bounds.size.y / 2f; // Set the threshold for losing
+
+        shootImage.SetActive(false);
     }
 
     private void FixedUpdate() {
@@ -41,6 +54,14 @@ public class PlayerControl : MonoBehaviour
 
         // Check if the player has fallen below the threshold
         CheckLoseCondition();
+
+        // // Handle shooting sprite change
+        // CheckShootInput();
+    }
+
+    private void Update(){
+        // Handle shooting sprite change
+        CheckShootInput();
     }
 
     private void WrapAroundBackground() {
@@ -62,5 +83,52 @@ public class PlayerControl : MonoBehaviour
             // Optional: Disable player movement or other logic to handle game over
             rb.velocity = Vector2.zero; // Stop player movement
         }
+    }
+
+    private void CheckShootInput() {
+        // Check if the up key is pressed
+        if (Input.GetKeyDown(KeyCode.UpArrow)) {
+            // Change the sprite to the jump sprite
+            spriteRenderer.sprite = shootSprite;
+            // Show the shooting image
+            shootImage.SetActive(true);
+            // Launch the projectile
+            LaunchProjectile();
+            // Revert to the default sprite after a delay
+            Invoke("RevertSprite", spriteRevertDelay);
+        }
+    }
+
+    private void LaunchProjectile() {
+        // Instantiate the projectile at the player's position
+        GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+
+        // Determine the target position (above the player)
+        Vector3 targetPosition = new Vector3(transform.position.x, background.position.y + 5f, transform.position.z); // Adjust '5f' as needed
+
+        // Start moving the projectile towards the target
+        StartCoroutine(MoveProjectile(projectile, targetPosition));
+    }
+
+    private IEnumerator MoveProjectile(GameObject projectile, Vector3 targetPosition) {
+        float time = 0;
+
+        Vector3 startPosition = projectile.transform.position;
+
+        while (time < 1) {
+            // Move the projectile over time to the target position
+            projectile.transform.position = Vector3.Lerp(startPosition, targetPosition, time);
+            time += Time.deltaTime * projectileSpeed;
+            yield return null;
+        }
+
+        // Optionally, destroy the projectile after it reaches the target position
+        Destroy(projectile);
+    }
+
+    private void RevertSprite() {
+        // Revert the sprite back to the default sprite
+        spriteRenderer.sprite = defaultSprite;
+        shootImage.SetActive(false);
     }
 }
