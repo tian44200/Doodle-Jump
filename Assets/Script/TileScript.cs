@@ -5,15 +5,16 @@ using UnityEngine;
 
 public class TileScript : MonoBehaviour
 {
-    public float jumpForce = 10;
+    public float jumpForce;
 
 
     private void OnCollisionEnter2D(Collision2D other) {
         Rigidbody2D doodleRB = other.transform.GetComponent<Rigidbody2D>();
 
-        //A corriger
-        if(doodleRB.velocity.y < 0){
-            doodleRB.AddForce(Vector2.up*jumpForce);
+        //If Doodle is falling 
+        if(doodleRB.velocity.y <= 1e-6){
+            doodleRB.AddForce(Vector2.up*jumpForce, ForceMode2D.Impulse);
+
         }
 
     }
