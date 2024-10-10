@@ -11,7 +11,6 @@ public class PlayerControl : MonoBehaviour
     public Transform background; // Reference to the background object
     private float backgroundHalfWidth;
     public float loseThreshold; // Variable to set the lose threshold
-    public GameObject uiManager; // Reference to the UIManager
     
     public SpriteRenderer spriteRenderer; // Reference to the player's SpriteRenderer
     public Sprite defaultSprite; // The normal Doodle sprite
@@ -52,9 +51,6 @@ public class PlayerControl : MonoBehaviour
         // Call the function to check for screen wrapping
         WrapAroundBackground();
 
-        // Check if the player has fallen below the threshold
-        CheckLoseCondition();
-
         // // Handle shooting sprite change
         // CheckShootInput();
     }
@@ -75,15 +71,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    private void CheckLoseCondition() {
-        // If the player falls below the lose threshold
-        if (transform.position.y < loseThreshold) {
-            // Notify the UIManager to show the lose message
-            uiManager.GetComponent<UIManager>().ShowLoseMessage();
-            // Optional: Disable player movement or other logic to handle game over
-            rb.velocity = Vector2.zero; // Stop player movement
-        }
-    }
+
 
     private void CheckShootInput() {
         // Check if the up key is pressed

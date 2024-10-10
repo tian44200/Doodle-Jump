@@ -17,7 +17,6 @@ public class ScoreManager : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("ScoreManager is running...");
         // 检查玩家是否跳到了新的高度
         if (player.position.y > highestPoint)
         {
