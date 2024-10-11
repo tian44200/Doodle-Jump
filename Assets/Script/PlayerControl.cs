@@ -6,7 +6,6 @@ public class PlayerControl : MonoBehaviour
 {
     private Rigidbody2D rb;
     public float moveSpeed = 10f;
-
     private float LeftRight;
     public Transform background; // Reference to the background object
     private float backgroundHalfWidth;
@@ -23,10 +22,11 @@ public class PlayerControl : MonoBehaviour
     public GameObject projectilePrefab; // Reference to the projectile prefab
     public Transform projectileSpawnPoint; // The point where the projectile should be spawned
     public float projectileSpeed = 5f; // Speed at which the projectile is launched
-
+    private Animator animator;
+    private float lastDirection = -1; // 1 for right, -1 for left
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
-
+        animator = GetComponent<Animator>();
         // Calculate half of the background's width in world units
         SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
         backgroundHalfWidth = bgRenderer.bounds.size.x / 2f;
@@ -62,6 +62,9 @@ public class PlayerControl : MonoBehaviour
     private void Update(){
         // Handle shooting sprite change
         CheckShootInput();
+        HandleMovementInput();
+        HandleJumping();
+        // HandleShooting();
     }
 
     private void WrapAroundBackground() {
@@ -131,4 +134,49 @@ public class PlayerControl : MonoBehaviour
         spriteRenderer.sprite = defaultSprite;
         shootImage.SetActive(false);
     }
+
+    void HandleMovementInput()
+    {
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+
+        if (horizontalInput < 0)  // left direction input
+        {
+            animator.SetFloat("horizontalDirection", -1);  // face left
+            lastDirection = -1; // update the last direction to left
+        }
+        else if (horizontalInput > 0)  // right direction input
+        {
+            animator.SetFloat("horizontalDirection", 1);  // face right
+            lastDirection = 1; // update the last direction to right
+        }
+        else  // no input, keep the last direction
+        {
+            animator.SetFloat("horizontalDirection", lastDirection);  // face the last direction
+        }
+    }
+    void HandleJumping()
+    {
+        if (rb.velocity.y > 0.1f)
+        {
+            animator.SetBool("isJumping", true);
+        }
+        else
+        {
+            animator.SetBool("isJumping", false);
+        }
+    }
+
+    // void HandleShooting(){
+    //     if (Input.GetKeyDown(KeyCode.UpArrow)) {
+    //         // Change the sprite to the jump sprite
+    //         spriteRenderer.sprite = shootSprite;
+    //         // Show the shooting image
+    //         shootImage.SetActive(true);
+    //         // Launch the projectile
+    //         LaunchProjectile();
+    //         // Revert to the default sprite after a delay
+    //         Invoke("RevertSprite", spriteRevertDelay);
+    //     }
+    // }
+
 }
