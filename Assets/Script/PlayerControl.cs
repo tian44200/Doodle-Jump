@@ -186,14 +186,24 @@ public class PlayerControl : MonoBehaviour
         // Move the projectile towards the target over time
         while (time < 1)
         {
+            // Check if the projectile is null before trying to move it
+            if (projectile == null)
+            {
+                yield break; // Exit the coroutine if the projectile is destroyed
+            }
+
             projectile.transform.position = Vector3.Lerp(startPosition, targetPosition, time);
             time += Time.deltaTime * projectileSpeed;
             yield return null;
         }
 
         // Destroy the projectile after it reaches the target
-        Destroy(projectile);
+        if (projectile != null)
+        {
+            Destroy(projectile);
+        }
     }
+
 
 
 
