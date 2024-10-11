@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public GameObject breakingTilePrefab;
     public GameObject Doodle;
 
+    public GameObject springPrefab;
+
     private float minY = 0.5f;
     private float maxY = 1.5f;
 
@@ -19,6 +21,8 @@ public class GameManager : MonoBehaviour
     private float minBreakY = 0.1f;
     private float maxBreakY = 0.5f;
 
+    private float tileLenght = 0.250f;
+    private float tileHeight = 0.130f; 
 
     private float screenWidth = 2.5f;
 
@@ -28,19 +32,27 @@ public class GameManager : MonoBehaviour
 
 
     private void LateUpdate() {
+        GameObject returnedTile;
         if(Doodle.transform.position.y > SpawnPos.y - spawnLimit){
-            SpawnPlateform();
-            
-            if(Random.Range(0,1) <= 0.5){
+            returnedTile = SpawnPlateform();
+            if(Random.value < 0.3){
+                    SpawnSpring(returnedTile);
+                }
+
+            if(Random.value <= 0.5){
                 SpawnBreakingPlateform();
+                
             }
-            if(Random.Range(0,1) <=0.3){
-                SpawnMovingPlateform();
+            if(Random.value <=0.3){
+                returnedTile = SpawnMovingPlateform();
+                if(Random.value < 0.3){
+                    SpawnSpring(returnedTile);
+                }
             }
         }
     }
 
-    private void SpawnPlateform(){
+    private GameObject SpawnPlateform(){
         //Spawn between screen width and screnn height
         float xPos = Random.Range(-screenWidth,screenWidth);
         float yPos = Random.Range(minY,maxY);
@@ -48,25 +60,33 @@ public class GameManager : MonoBehaviour
         SpawnPos.x = xPos;
         SpawnPos.y += yPos; 
 
-        Instantiate(tilePrefab, SpawnPos,Quaternion.identity);
+        return Instantiate(tilePrefab, SpawnPos,Quaternion.identity);
     }
 
-    private void SpawnMovingPlateform(){
+    private GameObject SpawnMovingPlateform(){
         float xPos = Random.Range(-screenWidth,screenWidth);
         float yPos = Random.Range(minMoveY,maxMoveY);
 
         SpawnPos.x = xPos;
         SpawnPos.y += yPos; 
-        Instantiate(movingTilePrefab, SpawnPos,Quaternion.identity);
+        return Instantiate(movingTilePrefab, SpawnPos,Quaternion.identity);
     }
 
-    private void SpawnBreakingPlateform(){
+    private GameObject SpawnBreakingPlateform(){
         float xPos = Random.Range(-screenWidth,screenWidth);
         float yPos = Random.Range(minBreakY,maxBreakY);
 
         SpawnPos.x = xPos;
         SpawnPos.y += yPos; 
-        Instantiate(breakingTilePrefab, SpawnPos,Quaternion.identity);
+        return Instantiate(breakingTilePrefab, SpawnPos,Quaternion.identity);
+    }
+
+    private void SpawnSpring(GameObject dad){
+        float xPos = Random.Range(-tileLenght,tileLenght);
+
+        SpawnPos.x += xPos;
+        SpawnPos.y += tileHeight; 
+        Instantiate(springPrefab, SpawnPos,Quaternion.identity, dad.transform);
     }
 
 

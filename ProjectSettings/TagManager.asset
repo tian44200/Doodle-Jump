@@ -9,6 +9,8 @@ TagManager:
   - BlackHole
   - Monster
   - Projectile
+  - Spring
+  - Hat
   layers:
   - Default
   - TransparentFX

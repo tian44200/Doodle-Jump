@@ -1,16 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
     private Rigidbody2D rb;
+
+    public GameObject hat;
+    public float hatSpeed;
+
+
     public float moveSpeed = 10f;
     private float LeftRight;
     public Transform background; // Reference to the background object
     private float backgroundHalfWidth;
     public float loseThreshold; // Variable to set the lose threshold
-    public float jumpForce; // Jump force to apply to the player
+    public float jumpForce; // Jump force to apply to the 
+    public float springForce; // Jump force to apply to the player
+    
     public SpriteRenderer spriteRenderer; // Reference to the player's SpriteRenderer
     public float spriteRevertDelay = 0.5f; // Time to wait before reverting back to default sprite
     public GameObject shootImage; // Reference to the shooting image of the doodle
@@ -146,6 +154,21 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.CompareTag("Spring")){
+            if(rb.velocity.y <= 0.2f){
+                rb.AddForce(Vector2.up * springForce, ForceMode2D.Impulse);
+            }
+        }else if(other.gameObject.CompareTag("Hat")){
+            if(rb.velocity.y <= 0.2f){
+                hat.SetActive(true);
+                StartCoroutine(ApplyUpwardForce(10f));
+                // hat.SetActive(false);
+            }
+        }
+    }
+
     /************************/
     /**** Shooting logic ****/
     /************************/
@@ -174,8 +197,23 @@ public class PlayerControl : MonoBehaviour
         // Set the target position (above the player)
         Vector3 targetPosition = new Vector3(transform.position.x, background.position.y + 5f, transform.position.z);
 
+
+
         // Start moving the projectile
         StartCoroutine(MoveProjectile(projectile, targetPosition));
+    }
+
+    //Doesn't work snif
+    private IEnumerator ApplyUpwardForce(float duration)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            // Applique une force vers le haut
+            rb.AddForce(Vector2.up * hatSpeed, ForceMode2D.Force);
+            elapsedTime += Time.deltaTime; // Incrémente le temps écoulé
+            yield return null; // Attend la prochaine frame
+        }
     }
 
     private IEnumerator MoveProjectile(GameObject projectile, Vector3 targetPosition)

@@ -235,6 +235,69 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Spring1
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 400
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bed339b27fd2aa64e93a9fcf8f8b9803
+      internalID: 1016853014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spring2
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 369
+        width: 23
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3791838fb85e6d4488b120b9015686db
+      internalID: -564578492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hat
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 256
+        width: 31
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1c4e8e19eda8c54790c15bee298b66d
+      internalID: -348874821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -250,8 +313,11 @@ TextureImporter:
       BreakTile2: -1610029507
       BreakTile3: -728079301
       MovingTile: -2004644254
+      Spring1: 1016853014
+      Spring2: -564578492
       TileBasic: 481831014
       breakTile4: 1672248735
+      hat: -348874821
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
