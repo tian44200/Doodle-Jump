@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 548352045807672234}
   - component: {fileID: 2791668091009218880}
   - component: {fileID: 1802895538105554865}
-  - component: {fileID: 6513627644684669024}
   m_Layer: 0
   m_Name: TileBasic
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,16 +146,3 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
---- !u!114 &6513627644684669024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7777575070968499394}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1c0d0a049e074f7487abd544019ca28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jumpForce: 30

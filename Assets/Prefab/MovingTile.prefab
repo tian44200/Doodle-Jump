@@ -11,12 +11,11 @@ GameObject:
   - component: {fileID: 1305876557483728568}
   - component: {fileID: 8451607492285062192}
   - component: {fileID: 4604482249242957679}
-  - component: {fileID: 7852133160364273650}
   - component: {fileID: 4915838515645917778}
   - component: {fileID: 2132913962682032588}
   m_Layer: 0
   m_Name: MovingTile
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -101,19 +100,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.85
---- !u!114 &7852133160364273650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2636596294726914324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1c0d0a049e074f7487abd544019ca28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jumpForce: 30
 --- !u!251 &4915838515645917778
 PlatformEffector2D:
   m_ObjectHideFlags: 0

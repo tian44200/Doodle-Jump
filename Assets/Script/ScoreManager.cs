@@ -4,7 +4,7 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    public Transform player;  // Doodle 角色的 Transform，用来获取它的 Y 轴高度
+    public Transform player;  // 
     public TextMeshProUGUI scoreText;    // UI Text 用于显示分数
 
     private float highestPoint = 0f;  // 记录玩家到达的最高点
