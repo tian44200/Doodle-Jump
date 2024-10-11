@@ -12,8 +12,6 @@ public class PlayerControl : MonoBehaviour
     public float loseThreshold; // Variable to set the lose threshold
     
     public SpriteRenderer spriteRenderer; // Reference to the player's SpriteRenderer
-    public Sprite defaultSprite; // The normal Doodle sprite
-    public Sprite shootSprite; // The sprite to use when shooting
     public float spriteRevertDelay = 0.5f; // Time to wait before reverting back to default sprite
     public GameObject shootImage; // Reference to the shooting image of the doodle
 
@@ -39,9 +37,9 @@ public class PlayerControl : MonoBehaviour
         LeftRight = Input.GetAxis("Horizontal") * moveSpeed;
 
         // Flip the player's sprite based on movement direction
-        if (LeftRight < 0) {
+        if (LeftRight >= 0) {
             transform.rotation = Quaternion.Euler(180, 0, 180); // Moving Left
-        } else if (LeftRight > 0) {
+        } else if (LeftRight < 0) {
             transform.rotation = Quaternion.Euler(0, 0, 0); // Moving Right
         }
 
@@ -51,17 +49,49 @@ public class PlayerControl : MonoBehaviour
         // Call the function to check for screen wrapping
         WrapAroundBackground();
 
-        // // Handle shooting sprite change
-        // CheckShootInput();
     }
 
     private void Update(){
         // Handle shooting sprite change
-        CheckShootInput();
+        // CheckShootInput();
         HandleMovementInput();
         HandleJumping();
-        // HandleShooting();
+        HandleShooting();
     }
+
+/************************/
+/**** Movement logic ****/
+/************************/
+void HandleMovementInput()
+    {
+    float horizontalInput = Input.GetAxisRaw("Horizontal");
+
+    if (horizontalInput < 0)  // 按下左键
+    {
+        lastDirection = -1;  // 记录最后的方向
+        transform.rotation = Quaternion.Euler(0, 0, 0);  // 朝左
+    }
+    else if (horizontalInput > 0)  // 按下右键
+    {
+        lastDirection = 1;  // 记录最后的方向
+        transform.rotation = Quaternion.Euler(180, 0, 180);  // 朝右
+    }
+    else
+    {
+        // 没有输入时，保持最后的方向
+        if (lastDirection == 1)
+        {
+            transform.rotation = Quaternion.Euler(180, 0, 180);  // 保持朝右
+        }
+        else if (lastDirection == -1)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);  // 保持朝左
+        }
+    }
+
+    // 应用水平移动速度
+    rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+}
 
     private void WrapAroundBackground() {
         // Check if the player has moved beyond the left side of the background
@@ -74,97 +104,69 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+/************************/
+/**** Shooting logic ****/
+/************************/
 
-
-    private void CheckShootInput() {
-        // Check if the up key is pressed
-        if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            // Change the sprite to the jump sprite
-            spriteRenderer.sprite = shootSprite;
-            // Show the shooting image
-            shootImage.SetActive(true);
-            // Launch the projectile
-            LaunchProjectile();
-            // Revert to the default sprite after a delay
-            Invoke("RevertSprite", spriteRevertDelay);
-        }
-    }
-
-    private void LaunchProjectile() {
-        // Instantiate the projectile at the player's position
-        GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-
-        // Determine the target position (above the player)
-        Vector3 targetPosition = new Vector3(transform.position.x, background.position.y + 5f, transform.position.z); // Adjust '5f' as needed
-
-        // Start moving the projectile towards the target
-        StartCoroutine(MoveProjectile(projectile, targetPosition));
-    }
-
-    private IEnumerator MoveProjectile(GameObject projectile, Vector3 targetPosition) {
-        float time = 0;
-
-        Vector3 startPosition = projectile.transform.position;
-
-        while (time < 1) {
-            // Move the projectile over time to the target position
-            projectile.transform.position = Vector3.Lerp(startPosition, targetPosition, time);
-            time += Time.deltaTime * projectileSpeed;
-            yield return null;
-        }
-
-        // Optionally, destroy the projectile after it reaches the target position
-        Destroy(projectile);
-    }
-
-    private void RevertSprite() {
-        // Revert the sprite back to the default sprite
-        spriteRenderer.sprite = defaultSprite;
-        shootImage.SetActive(false);
-    }
-
-    void HandleMovementInput()
+   void HandleJumping()
+{
+    // If the player is moving upwards (jumping), set isJumping to true
+    if (rb.velocity.y > 0.1f)
     {
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-
-        if (horizontalInput < 0)  // left direction input
-        {
-            animator.SetFloat("horizontalDirection", -1);  // face left
-            lastDirection = -1; // update the last direction to left
-        }
-        else if (horizontalInput > 0)  // right direction input
-        {
-            animator.SetFloat("horizontalDirection", 1);  // face right
-            lastDirection = 1; // update the last direction to right
-        }
-        else  // no input, keep the last direction
-        {
-            animator.SetFloat("horizontalDirection", lastDirection);  // face the last direction
-        }
+        animator.SetBool("isJumping", true);
     }
-    void HandleJumping()
+    // If the player is not moving upwards, set isJumping to false
+    else
     {
-        if (rb.velocity.y > 0.1f)
-        {
-            animator.SetBool("isJumping", true);
-        }
-        else
-        {
-            animator.SetBool("isJumping", false);
-        }
+        animator.SetBool("isJumping", false);
+    }
+}
+
+void HandleShooting()
+{
+    // Trigger shooting when the up arrow is pressed
+    if (Input.GetKeyDown(KeyCode.UpArrow))
+    {
+        animator.SetBool("isShooting", true);
+        LaunchProjectile(); // Launch the projectile
+        Invoke("StopShooting", spriteRevertDelay); // Reset shooting animation after a delay
+    }
+}
+
+void StopShooting()
+{
+    // Stop the shooting animation
+    animator.SetBool("isShooting", false);
+}
+
+private void LaunchProjectile()
+{
+    // Create a projectile at the player's position
+    GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+
+    // Set the target position (above the player)
+    Vector3 targetPosition = new Vector3(transform.position.x, background.position.y + 5f, transform.position.z);
+
+    // Start moving the projectile
+    StartCoroutine(MoveProjectile(projectile, targetPosition));
+}
+
+private IEnumerator MoveProjectile(GameObject projectile, Vector3 targetPosition)
+{
+    float time = 0;
+    Vector3 startPosition = projectile.transform.position;
+
+    // Move the projectile towards the target over time
+    while (time < 1)
+    {
+        projectile.transform.position = Vector3.Lerp(startPosition, targetPosition, time);
+        time += Time.deltaTime * projectileSpeed;
+        yield return null;
     }
 
-    // void HandleShooting(){
-    //     if (Input.GetKeyDown(KeyCode.UpArrow)) {
-    //         // Change the sprite to the jump sprite
-    //         spriteRenderer.sprite = shootSprite;
-    //         // Show the shooting image
-    //         shootImage.SetActive(true);
-    //         // Launch the projectile
-    //         LaunchProjectile();
-    //         // Revert to the default sprite after a delay
-    //         Invoke("RevertSprite", spriteRevertDelay);
-    //     }
-    // }
+    // Destroy the projectile after it reaches the target
+    Destroy(projectile);
+}
+
 
 }
