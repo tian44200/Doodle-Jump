@@ -1,17 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
     private Rigidbody2D rb;
+
+    public GameObject hat;
+    public float hatForce;
+    public float itemTimer;
+    public float hatTime;
+
+    public GameObject jetPack;
+    public float jetPackForce;
+    public float jetPackTime;
+    private Animator jetPackAnimator;
+
+
     public float moveSpeed = 10f;
     private float LeftRight;
     public Transform background; // Reference to the background object
     private float backgroundHalfWidth;
-    public float loseThreshold; // Variable to set the lose threshold
     public float jumpForce; // Jump force to apply to the player
-    public SpriteRenderer spriteRenderer; // Reference to the player's SpriteRenderer
+    public float springForce; // Jump force to apply to the player
+    
     public float spriteRevertDelay = 0.5f; // Time to wait before reverting back to default sprite
     public GameObject shootImage; // Reference to the shooting image of the doodle
 
@@ -29,7 +42,7 @@ public class PlayerControl : MonoBehaviour
         // Calculate half of the background's width in world units
         SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
         backgroundHalfWidth = bgRenderer.bounds.size.x / 2f;
-        loseThreshold = background.position.y - bgRenderer.bounds.size.y / 2f; // Set the threshold for losing
+        jetPackAnimator = jetPack.gameObject.GetComponent<Animator>();
 
         shootImage.SetActive(false);
     }
@@ -51,6 +64,26 @@ public class PlayerControl : MonoBehaviour
 
         // Apply velocity to the rigidbody to move the player
         rb.velocity = new Vector2(LeftRight, rb.velocity.y);
+
+        if(hat.activeSelf == true){
+            
+            itemTimer -= Time.deltaTime;
+            
+            if(itemTimer < 0){
+                hat.SetActive(false);
+            }
+        }
+
+        if(jetPack.activeSelf == true){
+            itemTimer-= Time.deltaTime;
+
+            if(itemTimer <1f){
+                jetPackAnimator.SetBool("endJetPack",true);
+            }
+            if( itemTimer < 0){
+                jetPack.SetActive(false);
+            }
+        }
 
         // Call the function to check for screen wrapping
         WrapAroundBackground();
@@ -146,6 +179,62 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+
+    void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Platform"))
+        {
+            // If the player is falling or not moving upwards, apply jump force
+            if (rb.velocity.y <= 0.2f)
+            {
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            }
+        }
+    }
+
+
+    // void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if(other.gameObject.CompareTag("Spring")){
+    //         if(rb.velocity.y <= 0.2f){
+    //             rb.AddForce(Vector2.up * springForce, ForceMode2D.Impulse);
+    //         }
+    //     }else if(other.gameObject.CompareTag("Hat")){
+    //         if(rb.velocity.y <= 0.2f){
+    //             hat.SetActive(true);
+    //             BoostUp(hatTime, hatForce);
+    //             Destroy(other.gameObject);
+    //         }
+    //     }else if(other.gameObject.CompareTag("JetPack")){
+    //         if(rb.velocity.y <= 0.2f){
+    //             jetPack.SetActive(true);
+    //             BoostUp(jetPackTime, jetPackForce);
+    //             Destroy(other.gameObject);
+    //         }
+    //     }
+    // }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if(other.gameObject.CompareTag("Spring")){
+            if(rb.velocity.y <= 0.2f){
+                rb.AddForce(Vector2.up * springForce, ForceMode2D.Impulse);
+            }
+        }else if(other.gameObject.CompareTag("Hat")){
+            if(rb.velocity.y <= 0.2f){
+                hat.SetActive(true);
+                BoostUp(hatTime, hatForce);
+                Destroy(other.gameObject);
+            }
+        }else if(other.gameObject.CompareTag("JetPack")){
+            if(rb.velocity.y <= 0.2f){
+                jetPack.SetActive(true);
+                BoostUp(jetPackTime, jetPackForce);
+                Destroy(other.gameObject);
+            }
+        }
+    }
+
     /************************/
     /**** Shooting logic ****/
     /************************/
@@ -174,9 +263,13 @@ public class PlayerControl : MonoBehaviour
         // Set the target position (above the player)
         Vector3 targetPosition = new Vector3(transform.position.x, background.position.y + 5f, transform.position.z);
 
+
+
         // Start moving the projectile
         StartCoroutine(MoveProjectile(projectile, targetPosition));
     }
+
+    
 
     private IEnumerator MoveProjectile(GameObject projectile, Vector3 targetPosition)
     {
@@ -204,7 +297,14 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    /************************/
+    /**** Picking Item logic ****/
+    /************************/
 
+    private void BoostUp(float duration, float boostForce){
+        rb.velocity = new Vector2(rb.velocity.x, boostForce);
+        itemTimer = duration;
+    }
 
 
 }

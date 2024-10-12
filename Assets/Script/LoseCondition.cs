@@ -10,6 +10,10 @@ public class LoseCondition : MonoBehaviour
     public float jumpForce = 30f; // The jump force when Doodle destroys a monster (can be set via Inspector)
     public string projectileTag = "Projectile"; // Tag for the projectile object
 
+    public void SetUIManager(GameObject ui){
+        uiManager = ui;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.transform.tag == "Doodle")
