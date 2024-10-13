@@ -7,6 +7,8 @@ public class PlayerControl : MonoBehaviour
 {
     private Rigidbody2D rb;
 
+    public GameObject mouth;  
+
     public GameObject hat;
     public float hatForce;
     public float itemTimer;
@@ -92,8 +94,6 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
-        // Handle shooting sprite change
-        // CheckShootInput();
         HandleMovementInput();
         HandleJumping();
         HandleShooting();
@@ -244,6 +244,7 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             animator.SetBool("isShooting", true);
+            mouth.SetActive(true);
             LaunchProjectile(); // Launch the projectile
             Invoke("StopShooting", spriteRevertDelay); // Reset shooting animation after a delay
         }
@@ -253,6 +254,7 @@ public class PlayerControl : MonoBehaviour
     {
         // Stop the shooting animation
         animator.SetBool("isShooting", false);
+        mouth.SetActive(false);
     }
 
     private void LaunchProjectile()

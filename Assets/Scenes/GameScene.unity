@@ -809,7 +809,7 @@ GameObject:
   - component: {fileID: 828596185}
   - component: {fileID: 828596186}
   m_Layer: 0
-  m_Name: ice-lik-njuska@2x
+  m_Name: mouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -824,7 +824,7 @@ Transform:
   m_GameObject: {fileID: 828596184}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.018, y: -0.25, z: 0}
+  m_LocalPosition: {x: 0.018, y: -0.145, z: 0}
   m_LocalScale: {x: 1.4956555, y: 1.4095035, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -870,7 +870,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: ca7508456783ee84fb7bbda5fc04ab1b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1660,7 +1660,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: bb7bd53a7ba97d6499d6113a7da82b50, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 59315fb3a1dd70a48867ead1c09a6a52, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1775,6 +1775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 373236e5cd9714253bbc8e3a919a9bb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouth: {fileID: 828596184}
   hat: {fileID: 251140497}
   hatForce: 10
   itemTimer: 0
