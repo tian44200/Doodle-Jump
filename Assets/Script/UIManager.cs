@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
+        endPagePanel.SetActive(true); // Ensure the panel is active
         // Get the RectTransform component of the EndPage Panel
         endPageRect = endPagePanel.GetComponent<RectTransform>();
 
