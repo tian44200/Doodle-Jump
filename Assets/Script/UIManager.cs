@@ -2,6 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement; // For scene management
 using System.Collections;
 
+/// <summary>
+/// The UIManager class is responsible for managing the user interface elements in the game,
+/// specifically the end page panel that appears when the game ends. It handles the sliding
+/// animation of the end page panel, pausing the game when the panel is fully visible, and
+/// provides methods to navigate back to the main menu or restart the game.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
     // UI Elements

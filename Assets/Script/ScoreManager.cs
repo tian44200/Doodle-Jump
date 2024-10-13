@@ -1,33 +1,46 @@
 using UnityEngine;
-using UnityEngine.UI;  // 用于处理 UI 元素
+using UnityEngine.UI;  // For handling UI elements
 using TMPro;
 
+/// <summary>
+/// The ScoreManager class is responsible for managing the player's score in the game.
+/// It tracks the highest point the player has reached, updates the score display in real-time,
+/// and handles the saving and displaying of the high score when the player dies.
+/// It interacts with UI elements to show the current score, the high score, and the final score on the end page.
+/// </summary>
 public class ScoreManager : MonoBehaviour
 {
-    public Transform player;  // 
-    public TextMeshProUGUI scoreText;    // UI Text 用于显示分数
-        public TextMeshProUGUI highScoreGlobalText; // UI Text to display the highest score on end page
+    public Transform player;  // Reference to the player
+    public TextMeshProUGUI scoreText;    // UI Text for displaying the current score
+    public TextMeshProUGUI highScoreGlobalText; // UI Text to display the highest score on the end page
+    public TextMeshProUGUI endScoreText; // UI Text to display the final score on the end page
 
-
-    private float highestPoint = 0f;  // 记录玩家到达的最高点
-
-    private int score = 0;  // 分数
+    private float highestPoint = 0f;  // Track the highest point the player has reached
+    private int scoreInGame = 0;  // Current score
 
     void Start()
     {
+        // Load the global high score
         int highScoreGlobal = PlayerPrefs.GetInt("HighScoreGlobal", 0);
-        scoreText.text = score.ToString();  // 初始化分数显示
-        highScoreGlobalText.text = highScoreGlobal.ToString(); // Show the highest score on the end page (initially hidden
+
+        // Initialize score display
+        scoreText.text = scoreInGame.ToString();
+
+        // Display the highest score on the end page (initially hidden)
+        highScoreGlobalText.text = "your high score: " + highScoreGlobal.ToString();
+
+        // Display the final score on the end page (initially hidden)
+        endScoreText.text = "your score: " + scoreInGame.ToString();
     }
 
     void Update()
     {
-        // 检查玩家是否跳到了新的高度
+        // Check if the player has reached a new height
         if (player.position.y > highestPoint)
         {
-            highestPoint = player.position.y;  // 更新最高点
-            score = Mathf.FloorToInt(highestPoint);  // 将高度转换为整数作为分数
-            scoreText.text = score.ToString();  // 更新 UI 显示
+            highestPoint = player.position.y;  // Update the highest point
+            scoreInGame = Mathf.FloorToInt(highestPoint);  // Convert height to an integer score
+            scoreText.text = scoreInGame.ToString();  // Update the score UI
         }
     }
 
@@ -38,13 +51,16 @@ public class ScoreManager : MonoBehaviour
         int highScoreGlobal = PlayerPrefs.GetInt("highScoreGlobal", 0);
 
         // If the current score is higher than the saved high score, update it
-        if (score > highScoreGlobal)
+        if (scoreInGame > highScoreGlobal)
         {
-            PlayerPrefs.SetInt("highScoreGlobal", score);
+            PlayerPrefs.SetInt("highScoreGlobal", scoreInGame);
             PlayerPrefs.Save();  // Ensure the new high score is saved to disk
         }
 
         // Update the high score text for the end page
-        highScoreGlobalText.text = PlayerPrefs.GetInt("highScoreGlobal").ToString();
+        highScoreGlobalText.text = "your high score: " + PlayerPrefs.GetInt("highScoreGlobal").ToString();
+
+        // Update the final score text on the end page
+        endScoreText.text = "your score: " + scoreInGame.ToString();
     }
 }
