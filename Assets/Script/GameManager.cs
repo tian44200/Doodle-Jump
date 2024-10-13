@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public GameObject blackHolePrefab;
     public GameObject uiManager;
 
+    public GameObject endPageManager; // Add reference to EndPageManager
+
+
     private float minY = 0.5f;
     private float maxY = 1.5f;
 
