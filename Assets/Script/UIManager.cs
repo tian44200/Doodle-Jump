@@ -28,15 +28,6 @@ public class UIManager : MonoBehaviour
         endPageRect.anchoredPosition = new Vector2(0, -Screen.height); 
     }
 
-    void Update()
-    {
-        // Temporary trigger for testing (space bar)
-        if (Input.GetKeyDown(KeyCode.Space)) // Replace this with the actual trigger (e.g., doodle's death)
-        {
-            TriggerEndPage();
-        }
-    }
-
     public void TriggerEndPage()
     {
         // Trigger sliding when needed (e.g., doodle dies)
