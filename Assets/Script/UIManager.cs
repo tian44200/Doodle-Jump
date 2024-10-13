@@ -1,40 +1,69 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Required for scene management
+using UnityEngine.SceneManagement; // For scene management
+using System.Collections;
 
+/// <summary>
+/// The UIManager class is responsible for managing the user interface elements in the game,
+/// specifically the end page panel that appears when the game ends. It handles the sliding
+/// animation of the end page panel, pausing the game when the panel is fully visible, and
+/// provides methods to navigate back to the main menu or restart the game.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
-    public GameObject loseMessagePanel; // Reference to the panel or UI element to display the image
-    public GameObject mainMenuButton; // Reference to the Main Menu button
-    public GameObject replayButton; // Reference to the Replay button
+    // UI Elements
+    public GameObject endPagePanel; // Reference to the End Page Panel
+
+    // Slide parameters
+    public float slideSpeed = 1000f; // Speed at which the panel slides up
+    private RectTransform endPageRect; // RectTransform of the end page panel
+    private bool isSliding = false; // To check if sliding is active
 
     void Start()
     {
-        // Initially hide the lose message panel and buttons
-        if(loseMessagePanel.activeSelf == true){
-            loseMessagePanel.SetActive(false);
+        endPagePanel.SetActive(true); // Ensure the panel is active
+        // Get the RectTransform component of the EndPage Panel
+        endPageRect = endPagePanel.GetComponent<RectTransform>();
+
+        // Set the initial position off-screen
+        endPageRect.anchoredPosition = new Vector2(0, -Screen.height); 
+    }
+
+    public void TriggerEndPage()
+    {
+        // Trigger sliding when needed (e.g., doodle dies)
+        if (!isSliding)
+        {
+            isSliding = true;
+            StartCoroutine(SlideEndPageUp());
         }
     }
 
-    public void ShowLoseMessage()
+    IEnumerator SlideEndPageUp()
     {
-        // Show the lose message panel and buttons
-        loseMessagePanel.SetActive(true);
-        mainMenuButton.SetActive(true); // Show Main Menu button
-        replayButton.SetActive(true); // Show Replay button
+        // Slide the panel upwards until it is fully visible
+        while (endPageRect.anchoredPosition.y < 0)
+        {
+            Vector2 incrementedV = new Vector2(0, slideSpeed * Time.deltaTime);
+            endPageRect.anchoredPosition += incrementedV;
+            yield return null;
+        }
+        
+        // Once the end page reaches the top, pause the game
+        endPageRect.anchoredPosition = Vector2.zero; // Ensure it's exactly at the top
         Time.timeScale = 0; // Optional: Pause the game
     }
 
-    // Method to return to the main menu
+    // Method to go back to the main menu
     public void GoToMainMenu()
     {
-        Time.timeScale = 1; // Resume time if it was paused
-        SceneManager.LoadScene("MainMenu"); // Load your main menu scene
+        Time.timeScale = 1; // Resume time before loading the new scene
+        SceneManager.LoadScene("MainMenu"); // Load the main menu scene
     }
 
-    // Method to restart the game
+    // Method to restart the current game
     public void ReplayGame()
     {
-        Time.timeScale = 1; // Resume time if it was paused
+        Time.timeScale = 1; // Resume time before reloading the current scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Reload the current scene
     }
 }
