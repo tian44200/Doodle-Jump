@@ -88,8 +88,12 @@ public class LoseCondition : MonoBehaviour
     // Method to handle when a projectile hits the monster
     void HandleProjectileCollision(Collider2D projectile)
     {
-        Destroy(this.gameObject); // Destroy the monster
-        Destroy(projectile.gameObject); // Destroy the projectile
-        Debug.Log("Monster destroyed by projectile!");
+        if (this.CompareTag(monsterTag))
+        {
+            Destroy(this.gameObject); // Destroy the monster
+            Destroy(projectile.gameObject); // Destroy the projectile
+            Debug.Log("Monster destroyed by projectile!");
+        }
+        
     }
 }
