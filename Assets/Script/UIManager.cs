@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; // For scene management
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// The UIManager class is responsible for managing the user interface elements in the game,
@@ -18,6 +19,11 @@ public class UIManager : MonoBehaviour
     private RectTransform endPageRect; // RectTransform of the end page panel
     private bool isSliding = false; // To check if sliding is active
 
+    // List of tags to scroll (you can add as many as you need)
+    public List<string> scrollableTags = new List<string> { "Doodle", "Platform", "BlackHole", "Monster", "Projectile","Spring","Hat","JetPack"};
+    // Cache the objects that need to scroll
+    private List<Transform> scrollableObjects = new List<Transform>();
+
     void Start()
     {
         endPagePanel.SetActive(true); // Ensure the panel is active
@@ -28,12 +34,21 @@ public class UIManager : MonoBehaviour
         endPageRect.anchoredPosition = new Vector2(0, -Screen.height); 
     }
 
-    public void TriggerEndPage()
+public void TriggerEndPage()
     {
-        // Trigger sliding when needed (e.g., doodle dies)
         if (!isSliding)
         {
             isSliding = true;
+
+            // Find and cache all objects that have tags specified in scrollableTags
+            foreach (string tag in scrollableTags)
+            {
+                GameObject[] objectsWithTag = GameObject.FindGameObjectsWithTag(tag);
+                foreach (GameObject obj in objectsWithTag)
+                {
+                    scrollableObjects.Add(obj.transform); // Add their transforms to the list
+                }
+            }
             StartCoroutine(SlideEndPageUp());
         }
     }
@@ -45,9 +60,16 @@ public class UIManager : MonoBehaviour
         {
             Vector2 incrementedV = new Vector2(0, slideSpeed * Time.deltaTime);
             endPageRect.anchoredPosition += incrementedV;
+
+            // Scroll all objects with the specified tags
+            foreach (Transform obj in scrollableObjects)
+            {
+                obj.position += new Vector3(0, incrementedV.y, 0); // Move upward by the same amount
+            }
+
             yield return null;
         }
-        
+
         // Once the end page reaches the top, pause the game
         endPageRect.anchoredPosition = Vector2.zero; // Ensure it's exactly at the top
         Time.timeScale = 0; // Optional: Pause the game
