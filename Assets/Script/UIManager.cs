@@ -85,15 +85,8 @@ public class UIManager : MonoBehaviour
 
         // Once the end page reaches the top, pause the game
         endPageRect.anchoredPosition = Vector2.zero; // Ensure it's exactly at the top
-        // Wait for the CheckForFallCollider coroutine to finish
-        // Wait for 2 seconds before pausing the game
+        // Wait for 2 seconds in order to let doodle finish its fall
         yield return new WaitForSeconds(2f);
-        // LoseCondition loseCondition = FindObjectOfType<LoseCondition>();
-        // Collider2D doodle = GameObject.FindGameObjectWithTag("Doodle").GetComponent<Collider2D>();
-        // if (loseCondition != null)
-        // {
-        //     yield return StartCoroutine(loseCondition.CheckForFallCollider(doodle));
-        // }
         Time.timeScale = 0; // Optional: Pause the game
     }
 
