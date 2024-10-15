@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; // For scene management
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.Sqlite;
+using TMPro;
 
 /// <summary>
 /// The UIManager class is responsible for managing the user interface elements in the game,
@@ -12,11 +15,17 @@ public class UIManager : MonoBehaviour
 {
     // UI Elements
     public GameObject endPagePanel; // Reference to the End Page Panel
+    // public Collider2D doodle; // Reference to the Doodle object
 
     // Slide parameters
     public float slideSpeed = 1000f; // Speed at which the panel slides up
     private RectTransform endPageRect; // RectTransform of the end page panel
     private bool isSliding = false; // To check if sliding is active
+
+    // List of tags to scroll (you can add as many as you need)
+    public List<string> scrollableTags = new List<string> { "Platform", "BlackHole", "Monster", "Projectile", "Spring", "Hat", "JetPack" };
+    // Cache the objects that need to scroll
+    private List<Transform> scrollableObjects = new List<Transform>();
 
     void Start()
     {
@@ -27,29 +36,59 @@ public class UIManager : MonoBehaviour
         endPageRect.anchoredPosition = new Vector2(0, -endPageRect.rect.height);
     }
 
-    public void TriggerEndPage()
+    public void TriggerEndPage(string colliderTag)
     {
         endPagePanel.SetActive(true); // Ensure the panel is active
         // Trigger sliding when needed (e.g., doodle dies)
         if (!isSliding)
         {
             isSliding = true;
-            StartCoroutine(SlideEndPageUp());
+            endPagePanel.SetActive(true); // Ensure the panel is active
+            // Find and cache all objects that have tags specified in scrollableTags
+            foreach (string tag in scrollableTags)
+            {
+                GameObject[] objectsWithTag = GameObject.FindGameObjectsWithTag(tag);
+                foreach (GameObject obj in objectsWithTag)
+                {
+                    scrollableObjects.Add(obj.transform); // Add their transforms to the list
+                }
+            }
+            StartCoroutine(SlideEndPageUp(colliderTag));
         }
     }
 
-    IEnumerator SlideEndPageUp()
+    IEnumerator SlideEndPageUp(string colliderTag)
     {
         // Slide the panel upwards until it is fully visible
         while (endPageRect.anchoredPosition.y < 0)
         {
             Vector2 incrementedV = new Vector2(0, slideSpeed * Time.deltaTime);
             endPageRect.anchoredPosition += incrementedV;
+
+            // Scroll all objects with the specified tags
+            foreach (Transform obj in scrollableObjects)
+            {
+                if (obj == null) continue; // Skip if the object is null
+                if (colliderTag == "FallCollider")
+                {
+                    obj.position += new Vector3(0, incrementedV.y / 25, 0); // Move upward by the same amount
+                }
+                else
+                {
+                    if (!obj.CompareTag("Doodle"))
+                    {
+                        obj.position += new Vector3(0, incrementedV.y / 25, 0); // Move upward by the same amount
+                    }
+                }
+
+            }
             yield return null;
         }
-        
+
         // Once the end page reaches the top, pause the game
         endPageRect.anchoredPosition = Vector2.zero; // Ensure it's exactly at the top
+        // Wait for 2 seconds in order to let doodle finish its fall
+        yield return new WaitForSeconds(2f);
         Time.timeScale = 0; // Optional: Pause the game
     }
 

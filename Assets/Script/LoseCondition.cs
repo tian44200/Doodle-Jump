@@ -115,10 +115,12 @@ public class LoseCondition : MonoBehaviour
     void HandleLoseCondition(Collider2D doodle)
     {
         Debug.Log("Doodle lost!");
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        gameManager.SetIsDead(true);
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
         scoreManager.OnPlayerDeath();
-        uiManager.GetComponent<UIManager>().TriggerEndPage();
         doodle.GetComponent<Rigidbody2D>().velocity = Vector2.zero; // Stop player movement
+        uiManager.GetComponent<UIManager>().TriggerEndPage(gameObject.tag);
     }
 
     /// <summary>
