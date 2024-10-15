@@ -32,12 +32,14 @@ public class UIManager : MonoBehaviour
         // Get the RectTransform component of the EndPage Panel
         endPageRect = endPagePanel.GetComponent<RectTransform>();
 
-        // Set the initial position off-screen
-        endPageRect.anchoredPosition = new Vector2(0, -Screen.height);
+        // Ensure the panel is positioned below the screen and adjust with the screen size
+        endPageRect.anchoredPosition = new Vector2(0, -endPageRect.rect.height);
     }
 
     public void TriggerEndPage(string colliderTag)
     {
+        endPagePanel.SetActive(true); // Ensure the panel is active
+        // Trigger sliding when needed (e.g., doodle dies)
         if (!isSliding)
         {
             isSliding = true;
