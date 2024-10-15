@@ -78,6 +78,17 @@ public class LoseCondition : MonoBehaviour
         }
         else
         {
+            // 从doodle的子对象中找到StarEffects
+            Transform starEffectsTransform = doodle.transform.Find("StarEffects");
+            if (starEffectsTransform != null)
+            {
+                GameObject starEffects = starEffectsTransform.gameObject;
+                starEffects.SetActive(true);  // 激活StarEffects效果
+            }
+            else
+            {
+                Debug.LogError("StarEffects not found under Doodle.");
+            }
             HandleLoseCondition(doodle);
         }
     }
@@ -115,6 +126,12 @@ public class LoseCondition : MonoBehaviour
     void HandleLoseCondition(Collider2D doodle)
     {
         Debug.Log("Doodle lost!");
+        // 禁用 Doodle 的碰撞体，避免进一步的碰撞
+        Collider2D doodleCollider = doodle.GetComponent<Collider2D>();
+        if (doodleCollider != null)
+        {
+            doodleCollider.enabled = false;  // 禁用碰撞
+        }
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
         scoreManager.OnPlayerDeath();
         uiManager.GetComponent<UIManager>().TriggerEndPage();
