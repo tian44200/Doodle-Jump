@@ -18,6 +18,8 @@ public class LoseCondition : MonoBehaviour
     public string monsterTag = "Monster"; // Tag for the Monster object
     public float jumpForce = 30f; // The jump force when Doodle destroys a monster (can be set via Inspector)
     public string projectileTag = "Projectile"; // Tag for the projectile object
+    public AudioSource jumpSound; // Reference to the AudioSource for the jump sound
+
 
     /// <summary>
     /// Sets the UIManager reference.
@@ -69,18 +71,29 @@ public class LoseCondition : MonoBehaviour
     /// Handles collision with a monster.
     /// </summary>
     /// <param name="doodle">The Doodle collider.</param>
-    void HandleMonsterCollision(Collider2D doodle)
+void HandleMonsterCollision(Collider2D doodle)
+{
+    if (IsHitFromAbove(doodle))
     {
-        if (IsHitFromAbove(doodle))
+        ApplyJumpForce(doodle);
+
+        // Play the sound before destroying the object
+        if (jumpSound != null)
         {
-            Destroy(gameObject); // Destroy the monster
-            ApplyJumpForce(doodle);
+            jumpSound.Play();
         }
-        else
-        {
-            HandleLoseCondition(doodle);
-        }
+
+        // Destroy the monster with a delay to allow the sound to play
+        // BUG DES FOIS, MAIS JE NE COMPREND PAS TROP...
+        // 
+        Destroy(gameObject, jumpSound.clip.length); // Delay destruction by the length of the audio clip
     }
+    else
+    {
+        HandleLoseCondition(doodle);
+    }
+}
+
 
     /// <summary>
     /// Checks if the Doodle is hitting the monster from above.

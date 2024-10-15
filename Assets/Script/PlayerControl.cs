@@ -6,6 +6,8 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     private Rigidbody2D rb;
+    private AudioSource audioSource; // AudioSource for jump sound
+
 
     public GameObject mouth;  
 
@@ -36,11 +38,20 @@ public class PlayerControl : MonoBehaviour
     public float projectileSpeed = 5f; // Speed at which the projectile is launched
     private Animator animator;
     private float lastDirection = -1; // 1 for right, -1 for left
+    public AudioClip jumpSound; 
+    public AudioClip shootSound; 
+    public AudioClip springSound;
+    public AudioClip jetPackSound;
+    public AudioClip hatSound;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        // Fetch the AudioSource component attached to the player
+        audioSource = GetComponent<AudioSource>();
+
         // Calculate half of the background's width in world units
         SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
         backgroundHalfWidth = bgRenderer.bounds.size.x / 2f;
@@ -70,6 +81,8 @@ public class PlayerControl : MonoBehaviour
         if(hat.activeSelf == true){
             
             itemTimer -= Time.deltaTime;
+
+            PlayHatSound();
             
             if(itemTimer < 0){
                 hat.SetActive(false);
@@ -78,6 +91,8 @@ public class PlayerControl : MonoBehaviour
 
         if(jetPack.activeSelf == true){
             itemTimer-= Time.deltaTime;
+
+            PlayJetPackSound();
 
             if(itemTimer <1f){
                 jetPackAnimator.SetBool("endJetPack",true);
@@ -90,6 +105,12 @@ public class PlayerControl : MonoBehaviour
         // Call the function to check for screen wrapping
         WrapAroundBackground();
 
+    }
+
+    private void PlayHatSound(){
+        if(hatSound != null && audioSource != null){
+            audioSource.PlayOneShot(hatSound);
+        }
     }
 
     private void Update()
@@ -175,6 +196,8 @@ public class PlayerControl : MonoBehaviour
             if (rb.velocity.y <= 0.2f)
             {
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                PlayJumpSound(); // Play sound when jumping
+
             }
         }
     }
@@ -219,6 +242,8 @@ public class PlayerControl : MonoBehaviour
         if(other.gameObject.CompareTag("Spring")){
             if(rb.velocity.y <= 0.2f){
                 rb.AddForce(Vector2.up * springForce, ForceMode2D.Impulse);
+                PlaySpringSound(); // Play the spring sound when bouncing on a spring
+
             }
         }else if(other.gameObject.CompareTag("Hat")){
             if(rb.velocity.y <= 0.2f){
@@ -235,6 +260,29 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    // Method to play the jump sound
+    private void PlayJumpSound()
+    {
+        if (jumpSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(jumpSound);
+        }
+    }
+
+    private void PlaySpringSound()
+    {
+        if (springSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(springSound);
+        }
+    }
+
+    private void PlayJetPackSound(){
+        if(jetPackSound != null && audioSource != null){
+            audioSource.PlayOneShot(jetPackSound);
+        }
+    }
+
     /************************/
     /**** Shooting logic ****/
     /************************/
@@ -245,8 +293,17 @@ public class PlayerControl : MonoBehaviour
         {
             animator.SetBool("isShooting", true);
             mouth.SetActive(true);
+            PlayShootSound(); // Play the shoot sound
             LaunchProjectile(); // Launch the projectile
             Invoke("StopShooting", spriteRevertDelay); // Reset shooting animation after a delay
+        }
+    }
+
+    private void PlayShootSound()
+    {
+        if (shootSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(shootSound);
         }
     }
 

@@ -158,26 +158,52 @@ public class GameManager : MonoBehaviour
         SpawnPos.y += blackHoleHeight;
     }
 
-    private void SpawnMonster(){
-        float xPos = Random.Range(-screenWidth+monsterWidth,screenWidth-monsterWidth);// +/- BlackHole width
-        float yPos = Random.Range(minBreakY,maxBreakY-monsterHeight);// +/- BlackHole Height
+private void SpawnMonster()
+{
+    float xPos = Random.Range(-screenWidth + monsterWidth, screenWidth - monsterWidth);
+    float yPos = Random.Range(minBreakY, maxBreakY - monsterHeight);
 
-        SpawnPos.x = xPos;
-        SpawnPos.y += yPos+monsterHeight;
+    SpawnPos.x = xPos;
+    SpawnPos.y += yPos + monsterHeight;
 
-        GameObject bh = Instantiate(monsterPrefab, SpawnPos,Quaternion.identity);
-        bh.GetComponent<LoseCondition>().SetUIManager(uiManager);
-        if(SpawnPos.x >= 0){
-            xPos = Random.Range(-screenWidth,SpawnPos.x-monsterWidth);
-            SpawnPos.x = xPos;
-            Instantiate(tilePrefab, SpawnPos,Quaternion.identity);
-        }else{
-            xPos = Random.Range(SpawnPos.x+monsterWidth,screenWidth);
-            SpawnPos.x = xPos;
-            Instantiate(tilePrefab, SpawnPos,Quaternion.identity);
-        }
+    // Instantiate the monster
+    GameObject monster = Instantiate(monsterPrefab, SpawnPos, Quaternion.identity);
+    monster.GetComponent<LoseCondition>().SetUIManager(uiManager);
 
-        SpawnPos.y += monsterHeight;
+    // Access all AudioSources on the monster
+    AudioSource[] audioSources = monster.GetComponents<AudioSource>();
+
+    if (audioSources.Length > 0)
+    {
+        // Play the specific audio source (modify index if needed)
+        // Example: if the spawn sound is on the second AudioSource, use index [1]
+        audioSources[0].Play();  // Play the first AudioSource
+
+        // If you want the second AudioSource (for other sounds like death, attack, etc.), use:
+        // audioSources[1].Play();
     }
+    else
+    {
+        Debug.LogWarning("No AudioSources found on the monster prefab!");
+    }
+
+    // Spawn additional platforms around the monster
+    if (SpawnPos.x >= 0)
+    {
+        xPos = Random.Range(-screenWidth, SpawnPos.x - monsterWidth);
+        SpawnPos.x = xPos;
+        Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
+    }
+    else
+    {
+        xPos = Random.Range(SpawnPos.x + monsterWidth, screenWidth);
+        SpawnPos.x = xPos;
+        Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
+    }
+
+    SpawnPos.y += monsterHeight;
+}
+
+
 
 }
