@@ -92,17 +92,17 @@ public class GameManager : MonoBehaviour
                 }
 
                 onSpring = playerControl.getUsedSpring();
-                if(DoodleHat.activeSelf == false && DoodleJetPack.activeSelf == false && onSpring == false){
-                    if (Random.value < 0.1)
-                    {
-                        SpawnBlackHole();
-                    }
+                // if(DoodleHat.activeSelf == false && DoodleJetPack.activeSelf == false && onSpring == false){
+                //     if (Random.value < 0.1)
+                //     {
+                //         SpawnBlackHole();
+                //     }
 
-                    if (Random.value < 0.1)
-                    {
-                        SpawnMonster();
-                    }
-                }
+                //     if (Random.value < 0.1)
+                //     {
+                //         SpawnMonster();
+                //     }
+                // }
 
 
                 if (Random.value <= 0.5)
@@ -135,7 +135,8 @@ public class GameManager : MonoBehaviour
     {
         //Spawn between screen width and screnn height
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minY, Mathf.Max(0.5f,maxY));
+        float yPos = Random.Range(minY, Mathf.Max(0.5f,maxY*difficulty));
+        Debug.Log(yPos + "nomaar");
 
         SpawnPos.x = xPos;
         SpawnPos.y += yPos;
@@ -149,7 +150,8 @@ public class GameManager : MonoBehaviour
     private GameObject SpawnMovingPlateform()
     {
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minMoveY, Mathf.Max(0.5f,maxMoveY));
+        float yPos = Random.Range(minMoveY, Mathf.Max(0.5f,maxMoveY*difficulty));
+        Debug.Log(yPos + "move");
 
         SpawnPos.x = xPos;
         SpawnPos.y += yPos;
@@ -162,7 +164,8 @@ public class GameManager : MonoBehaviour
     private GameObject SpawnBreakingPlateform()
     {
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minBreakY, Mathf.Max(0.5f,maxBreakY));
+        float yPos = Random.Range(minBreakY, Mathf.Max(0.5f,maxBreakY*difficulty));
+        Debug.Log(yPos + "break");
 
         SpawnPos.x = xPos;
         SpawnPos.y += yPos;
