@@ -11,6 +11,7 @@ public class MovingTile : MonoBehaviour
 
 
     private void Update(){
+        //Move the blue tile between the screen width
         transform.Translate(Vector2.right * speed * direction * Time.deltaTime);
         if (transform.position.x > levelWidth || transform.position.x < -levelWidth)
         {

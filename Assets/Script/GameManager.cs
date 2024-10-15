@@ -58,13 +58,14 @@ public class GameManager : MonoBehaviour
 
     // Adding difficulty when going up
     private float difficulty;
+    private float maxDiff = 500f;
     private ScoreManager scoreManager;
 
     void Awake()
     {
         playerControl = Doodle.GetComponent<PlayerControl>();
         scoreManager = GetComponent<ScoreManager>();
-        difficulty = Mathf.Min(1,scoreManager.gethighestPoint()/500f);
+        difficulty = Mathf.Min(1, scoreManager.gethighestPoint() / maxDiff);
     }
 
 
@@ -75,9 +76,10 @@ public class GameManager : MonoBehaviour
             GameObject returnedTile;
             if (Doodle.transform.position.y >= SpawnPos.y - spawnLimit)
             {
-                difficulty = Mathf.Min(1,scoreManager.gethighestPoint()/500f);
-                
+                difficulty = Mathf.Min(1, scoreManager.gethighestPoint() / 500f);
                 returnedTile = SpawnPlateform();
+
+                //Spawn Objects on tile depending on probability
                 if (Random.value < 0.10)
                 {
                     SpawnSpring(returnedTile);
@@ -92,23 +94,27 @@ public class GameManager : MonoBehaviour
                 }
 
                 onSpring = playerControl.getUsedSpring();
-                // if(DoodleHat.activeSelf == false && DoodleJetPack.activeSelf == false && onSpring == false){
-                //     if (Random.value < 0.1)
-                //     {
-                //         SpawnBlackHole();
-                //     }
+                if (DoodleHat.activeSelf == false && DoodleJetPack.activeSelf == false && onSpring == false)
+                {
+                    if (Random.value < 0.1)
+                    {
+                        SpawnBlackHole();
+                    }
 
-                //     if (Random.value < 0.1)
-                //     {
-                //         SpawnMonster();
-                //     }
-                // }
+                    if (Random.value < 0.1)
+                    {
+                        SpawnMonster();
+                    }
+                }
 
 
                 if (Random.value <= 0.5)
                 {
                     SpawnBreakingPlateform();
                 }
+
+
+                //Spawn Objects on tile depending on probability
                 if (Random.value <= 0.2)
                 {
                     returnedTile = SpawnMovingPlateform();
@@ -135,7 +141,7 @@ public class GameManager : MonoBehaviour
     {
         //Spawn between screen width and screnn height
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minY, Mathf.Max(0.5f,maxY*difficulty));
+        float yPos = Random.Range(minY, Mathf.Max(0.5f, maxY * difficulty));
         Debug.Log(yPos + "nomaar");
 
         SpawnPos.x = xPos;
@@ -150,7 +156,7 @@ public class GameManager : MonoBehaviour
     private GameObject SpawnMovingPlateform()
     {
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minMoveY, Mathf.Max(0.5f,maxMoveY*difficulty));
+        float yPos = Random.Range(minMoveY, Mathf.Max(0.5f, maxMoveY * difficulty));
         Debug.Log(yPos + "move");
 
         SpawnPos.x = xPos;
@@ -164,7 +170,7 @@ public class GameManager : MonoBehaviour
     private GameObject SpawnBreakingPlateform()
     {
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minBreakY, Mathf.Max(0.5f,maxBreakY*difficulty));
+        float yPos = Random.Range(minBreakY, Mathf.Max(0.5f, maxBreakY * difficulty));
         Debug.Log(yPos + "break");
 
         SpawnPos.x = xPos;
@@ -222,22 +228,24 @@ public class GameManager : MonoBehaviour
 
         GameObject bh = Instantiate(blackHolePrefab, SpawnPos, Quaternion.identity);
         bh.GetComponent<LoseCondition>().SetUIManager(uiManager);
+
+        //Spawn two tiles depending on the side of the blackHole
         if (SpawnPos.x >= 0)
         {
             xPos = Random.Range(-screenWidth, SpawnPos.x - blackHolewidth);
             SpawnPos.x = xPos;
-            SpawnPos.y = SpawnPos.y - blackHoleHeight*0.25f; 
+            SpawnPos.y = SpawnPos.y - blackHoleHeight * 0.25f;
             Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
-            SpawnPos.y = SpawnPos.y + blackHoleHeight*0.5f; 
+            SpawnPos.y = SpawnPos.y + blackHoleHeight * 0.5f;
             Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
         }
         else
         {
             xPos = Random.Range(SpawnPos.x + blackHolewidth, screenWidth);
             SpawnPos.x = xPos;
-            SpawnPos.y = SpawnPos.y - blackHoleHeight*0.25f; 
+            SpawnPos.y = SpawnPos.y - blackHoleHeight * 0.25f;
             Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
-            SpawnPos.y = SpawnPos.y + blackHoleHeight*0.5f; 
+            SpawnPos.y = SpawnPos.y + blackHoleHeight * 0.5f;
             Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
 
         }
@@ -258,7 +266,9 @@ public class GameManager : MonoBehaviour
 
         GameObject bh = Instantiate(monsterPrefab, SpawnPos, Quaternion.identity);
         bh.GetComponent<LoseCondition>().SetUIManager(uiManager);
-        if (SpawnPos.x >= 0)
+
+        //Spawn tile depending on the position of the monster
+        if (SpawnPos.x >= 0)//Monster on the right, spawn the tile on the left
         {
             xPos = Random.Range(-screenWidth, SpawnPos.x - monsterWidth);
             SpawnPos.x = xPos;
