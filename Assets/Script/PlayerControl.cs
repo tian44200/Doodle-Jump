@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class PlayerControl : MonoBehaviour
     public float jetPackTime;
     private Animator jetPackAnimator;
 
-
+    private bool usedSpring = false;
     public float moveSpeed = 10f;
     private float LeftRight;
     public Transform background; // Reference to the background object
@@ -174,6 +175,7 @@ public class PlayerControl : MonoBehaviour
             // If the player is falling or not moving upwards, apply jump force
             if (rb.velocity.y <= 0.2f)
             {
+                usedSpring = false;
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }
         }
@@ -187,37 +189,18 @@ public class PlayerControl : MonoBehaviour
             // If the player is falling or not moving upwards, apply jump force
             if (rb.velocity.y <= 0.2f)
             {
+                usedSpring = false;
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }
         }
     }
 
 
-    // void OnTriggerEnter2D(Collider2D other)
-    // {
-    //     if(other.gameObject.CompareTag("Spring")){
-    //         if(rb.velocity.y <= 0.2f){
-    //             rb.AddForce(Vector2.up * springForce, ForceMode2D.Impulse);
-    //         }
-    //     }else if(other.gameObject.CompareTag("Hat")){
-    //         if(rb.velocity.y <= 0.2f){
-    //             hat.SetActive(true);
-    //             BoostUp(hatTime, hatForce);
-    //             Destroy(other.gameObject);
-    //         }
-    //     }else if(other.gameObject.CompareTag("JetPack")){
-    //         if(rb.velocity.y <= 0.2f){
-    //             jetPack.SetActive(true);
-    //             BoostUp(jetPackTime, jetPackForce);
-    //             Destroy(other.gameObject);
-    //         }
-    //     }
-    // }
-
     void OnTriggerStay2D(Collider2D other)
     {
         if(other.gameObject.CompareTag("Spring")){
             if(rb.velocity.y <= 0.2f){
+                usedSpring = true;
                 rb.AddForce(Vector2.up * springForce, ForceMode2D.Impulse);
             }
         }else if(other.gameObject.CompareTag("Hat")){
@@ -225,15 +208,22 @@ public class PlayerControl : MonoBehaviour
                 hat.SetActive(true);
                 BoostUp(hatTime, hatForce);
                 Destroy(other.gameObject);
+                usedSpring = false;
             }
         }else if(other.gameObject.CompareTag("JetPack")){
             if(rb.velocity.y <= 0.2f){
                 jetPack.SetActive(true);
                 BoostUp(jetPackTime, jetPackForce);
                 Destroy(other.gameObject);
+                usedSpring = false;
             }
         }
     }
+
+    public bool getUsedSpring(){
+        return usedSpring;
+    }
+
 
     /************************/
     /**** Shooting logic ****/
