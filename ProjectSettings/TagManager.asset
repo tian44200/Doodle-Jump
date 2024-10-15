@@ -12,6 +12,7 @@ TagManager:
   - Spring
   - Hat
   - JetPack
+  - FallCollider
   layers:
   - Default
   - TransparentFX
