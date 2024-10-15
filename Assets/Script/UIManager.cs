@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement; // For scene management
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.Sqlite;
+using TMPro;
 
 /// <summary>
 /// The UIManager class is responsible for managing the user interface elements in the game,
@@ -13,6 +15,7 @@ public class UIManager : MonoBehaviour
 {
     // UI Elements
     public GameObject endPagePanel; // Reference to the End Page Panel
+    // public Collider2D doodle; // Reference to the Doodle object
 
     // Slide parameters
     public float slideSpeed = 1000f; // Speed at which the panel slides up
@@ -20,26 +23,25 @@ public class UIManager : MonoBehaviour
     private bool isSliding = false; // To check if sliding is active
 
     // List of tags to scroll (you can add as many as you need)
-    public List<string> scrollableTags = new List<string> { "Doodle", "Platform", "BlackHole", "Monster", "Projectile","Spring","Hat","JetPack"};
+    public List<string> scrollableTags = new List<string> { "Platform", "BlackHole", "Monster", "Projectile", "Spring", "Hat", "JetPack" };
     // Cache the objects that need to scroll
     private List<Transform> scrollableObjects = new List<Transform>();
 
     void Start()
     {
-        endPagePanel.SetActive(true); // Ensure the panel is active
         // Get the RectTransform component of the EndPage Panel
         endPageRect = endPagePanel.GetComponent<RectTransform>();
 
         // Set the initial position off-screen
-        endPageRect.anchoredPosition = new Vector2(0, -Screen.height); 
+        endPageRect.anchoredPosition = new Vector2(0, -Screen.height);
     }
 
-public void TriggerEndPage()
+    public void TriggerEndPage(string colliderTag)
     {
         if (!isSliding)
         {
             isSliding = true;
-
+            endPagePanel.SetActive(true); // Ensure the panel is active
             // Find and cache all objects that have tags specified in scrollableTags
             foreach (string tag in scrollableTags)
             {
@@ -49,11 +51,11 @@ public void TriggerEndPage()
                     scrollableObjects.Add(obj.transform); // Add their transforms to the list
                 }
             }
-            StartCoroutine(SlideEndPageUp());
+            StartCoroutine(SlideEndPageUp(colliderTag));
         }
     }
 
-    IEnumerator SlideEndPageUp()
+    IEnumerator SlideEndPageUp(string colliderTag)
     {
         // Slide the panel upwards until it is fully visible
         while (endPageRect.anchoredPosition.y < 0)
@@ -64,14 +66,34 @@ public void TriggerEndPage()
             // Scroll all objects with the specified tags
             foreach (Transform obj in scrollableObjects)
             {
-                obj.position += new Vector3(0, incrementedV.y, 0); // Move upward by the same amount
-            }
+                if (obj == null) continue; // Skip if the object is null
+                if (colliderTag == "FallCollider")
+                {
+                    obj.position += new Vector3(0, incrementedV.y / 25, 0); // Move upward by the same amount
+                }
+                else
+                {
+                    if (!obj.CompareTag("Doodle"))
+                    {
+                        obj.position += new Vector3(0, incrementedV.y / 25, 0); // Move upward by the same amount
+                    }
+                }
 
+            }
             yield return null;
         }
 
         // Once the end page reaches the top, pause the game
         endPageRect.anchoredPosition = Vector2.zero; // Ensure it's exactly at the top
+        // Wait for the CheckForFallCollider coroutine to finish
+        // Wait for 2 seconds before pausing the game
+        yield return new WaitForSeconds(2f);
+        // LoseCondition loseCondition = FindObjectOfType<LoseCondition>();
+        // Collider2D doodle = GameObject.FindGameObjectWithTag("Doodle").GetComponent<Collider2D>();
+        // if (loseCondition != null)
+        // {
+        //     yield return StartCoroutine(loseCondition.CheckForFallCollider(doodle));
+        // }
         Time.timeScale = 0; // Optional: Pause the game
     }
 

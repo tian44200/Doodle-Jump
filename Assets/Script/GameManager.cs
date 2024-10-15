@@ -16,9 +16,6 @@ public class GameManager : MonoBehaviour
     public GameObject blackHolePrefab;
     public GameObject uiManager;
 
-    public GameObject endPageManager; // Add reference to EndPageManager
-
-
     private float minY = 0.5f;
     private float maxY = 1.5f;
 
@@ -44,9 +41,11 @@ public class GameManager : MonoBehaviour
     private Vector3 SpawnPos = new Vector3(0,8f,0);
     private float spawnLimit = 3f;
 
+    private bool isDead = false;
 
     private void LateUpdate() {
-        GameObject returnedTile;
+        if (!isDead){
+            GameObject returnedTile;
         if(Doodle.transform.position.y > SpawnPos.y - spawnLimit){
             returnedTile = SpawnPlateform();
             if(Random.value < 0.15){
@@ -80,6 +79,7 @@ public class GameManager : MonoBehaviour
                     SpawnJetPack(returnedTile);
                 }
             }
+        }
         }
     }
 
@@ -178,6 +178,10 @@ public class GameManager : MonoBehaviour
         }
 
         SpawnPos.y += monsterHeight;
+    }
+
+    public void SetIsDead(bool isDead){
+        this.isDead = isDead;
     }
 
 }

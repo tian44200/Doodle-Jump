@@ -115,12 +115,43 @@ public class LoseCondition : MonoBehaviour
     void HandleLoseCondition(Collider2D doodle)
     {
         Debug.Log("Doodle lost!");
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        gameManager.SetIsDead(true);
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
         scoreManager.OnPlayerDeath();
-        uiManager.GetComponent<UIManager>().TriggerEndPage();
         doodle.GetComponent<Rigidbody2D>().velocity = Vector2.zero; // Stop player movement
+        uiManager.GetComponent<UIManager>().TriggerEndPage(gameObject.tag);
     }
 
+// public IEnumerator CheckForFallCollider(Collider2D doodle)
+// {
+//     float elapsedTime = 0f;
+//     bool collidedWithFallCollider = false;
+
+//     // Check for collision with "FallCollider" for 2 seconds
+//     while (elapsedTime < 4f)
+//     {
+//         if (doodle.IsTouchingLayers(LayerMask.GetMask("FallCollider")))
+//         {
+//             collidedWithFallCollider = true;
+//             break;
+//         }
+
+//         elapsedTime += Time.deltaTime;
+//         yield return null;
+//     }
+
+//     if (collidedWithFallCollider)
+//     {
+//         Debug.Log("Doodle collided with FallCollider within 4 seconds.");
+//         // Additional logic if needed
+//     }
+//     else
+//     {
+//         Debug.Log("Doodle did not collide with FallCollider within 4 seconds.");
+//         // Additional logic if needed
+//     }
+// }
     /// <summary>
     /// Handles when a projectile hits the monster.
     /// </summary>
