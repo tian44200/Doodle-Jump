@@ -109,7 +109,10 @@ public class PlayerControl : MonoBehaviour
 
     private void PlayHatSound(){
         if(hatSound != null && audioSource != null){
+            audioSource.volume = Mathf.Clamp(0.005f, 0f, 1f);
             audioSource.PlayOneShot(hatSound);
+            // audioSource.volume = Mathf.Clamp(0.1f, 0f, 1f);
+
         }
     }
 
@@ -265,6 +268,7 @@ public class PlayerControl : MonoBehaviour
     {
         if (jumpSound != null && audioSource != null)
         {
+            audioSource.volume = Mathf.Clamp(0.1f, 0f, 1f);
             audioSource.PlayOneShot(jumpSound);
         }
     }
@@ -273,13 +277,17 @@ public class PlayerControl : MonoBehaviour
     {
         if (springSound != null && audioSource != null)
         {
+            audioSource.volume = Mathf.Clamp(0.1f, 0f, 1f);
             audioSource.PlayOneShot(springSound);
         }
     }
 
     private void PlayJetPackSound(){
         if(jetPackSound != null && audioSource != null){
+            audioSource.volume = Mathf.Clamp(0.005f, 0f, 1f);
             audioSource.PlayOneShot(jetPackSound);
+            // audioSource.volume = Mathf.Clamp(0.1f, 0f, 1f);
+
         }
     }
 
@@ -303,6 +311,7 @@ public class PlayerControl : MonoBehaviour
     {
         if (shootSound != null && audioSource != null)
         {
+            audioSource.volume = Mathf.Clamp(0.1f, 0f, 1f);
             audioSource.PlayOneShot(shootSound);
         }
     }
