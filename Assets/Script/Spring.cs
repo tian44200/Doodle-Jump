@@ -12,6 +12,7 @@ public class Spring : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
+        //Animate the spring when the doodle is falling on it
         if(other.tag == "Doodle" && other.transform.GetComponent<Rigidbody2D>().velocity.y < 1e-6){
             anim.SetBool("Animate",true);
         }

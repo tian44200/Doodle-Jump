@@ -63,4 +63,8 @@ public class ScoreManager : MonoBehaviour
         // Update the final score text on the end page
         endScoreText.text = "your score: " + scoreInGame.ToString();
     }
+
+    public float gethighestPoint(){
+        return highestPoint;
+    }
 }
