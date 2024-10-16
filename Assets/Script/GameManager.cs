@@ -288,23 +288,4 @@ public class GameManager : MonoBehaviour
         this.isDead = isDead;
     }
 
-    // Spawn additional platforms around the monster
-    if (SpawnPos.x >= 0)
-    {
-        xPos = Random.Range(-screenWidth, SpawnPos.x - monsterWidth);
-        SpawnPos.x = xPos;
-        Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
-    }
-    else
-    {
-        xPos = Random.Range(SpawnPos.x + monsterWidth, screenWidth);
-        SpawnPos.x = xPos;
-        Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
-    }
-
-    SpawnPos.y += monsterHeight;
-}
-
-
-
 }
