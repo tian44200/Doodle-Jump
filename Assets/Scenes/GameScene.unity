@@ -1324,7 +1324,6 @@ GameObject:
   - component: {fileID: 1032682161}
   - component: {fileID: 1032682160}
   - component: {fileID: 1032682162}
-  - component: {fileID: 1032682163}
   - component: {fileID: 1032682164}
   - component: {fileID: 1032682165}
   m_Layer: 0
@@ -1446,23 +1445,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.2, y: 0.123086214}
   m_EdgeRadius: 0
---- !u!114 &1032682163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1032682159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d8ef942f8a5dcc49ac10e7c45d66dbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiManager: {fileID: 1933749365}
-  blackHoleTag: BlackHole
-  monsterTag: Monster
-  jumpForce: 10
-  projectileTag: Projectile
 --- !u!114 &1032682164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1801,6 +1783,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1298075545}
   - component: {fileID: 1298075544}
+  - component: {fileID: 1298075550}
   - component: {fileID: 1298075546}
   - component: {fileID: 1298075547}
   - component: {fileID: 1298075548}
@@ -2004,6 +1987,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1298075550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298075543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00ce6ae3fcd5b4e24a2f04d4c665dd4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiManager: {fileID: 1933749365}
+  blackHoleTag: BlackHole
+  monsterTag: Monster
+  jumpForce: 30
+  projectileTag: Projectile
 --- !u!1001 &1362444841
 PrefabInstance:
   m_ObjectHideFlags: 0
