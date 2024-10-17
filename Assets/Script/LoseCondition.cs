@@ -12,6 +12,7 @@ public class LoseCondition : MonoBehaviour
     public float jumpForce = 30f; // The jump force when Doodle destroys a monster (can be set via Inspector)
     public float suckSpeed = 0.5f; // The speed at which the Doodle is sucked into the black hole
     private bool isBeingSucked = false; // Flag to check if the Doodle is being sucked into the black hole
+    private Collider2D other; // Reference to the Doodle's collider
 
     void Update()
     {
@@ -25,11 +26,12 @@ public class LoseCondition : MonoBehaviour
     // Called when another collider enters the trigger collider attached to this object.
     void OnTriggerEnter2D(Collider2D other)
     {
+        this.other = other;
         if (other.CompareTag(blackHoleTag))
         {
-            PlayerControl playerControl = other.GetComponent<PlayerControl>();
-            playerControl.SetDead(true, this);
-            HandleBlackHoleEntry(other);
+            PlayerControl playerControl = GetComponent<PlayerControl>();
+            playerControl.SetDead(true);
+            HandleBlackHoleEntry();
         }
         else if (other.CompareTag(monsterTag))
         {
@@ -40,18 +42,18 @@ public class LoseCondition : MonoBehaviour
     }
 
     // Handles entry into a black hole.
-    void HandleBlackHoleEntry(Collider2D doodle)
+    void HandleBlackHoleEntry()
     {
         Debug.Log("Doodle entered the black hole!");
 
         // Disable Doodle's gravity
-        if (doodle.TryGetComponent<Rigidbody2D>(out var doodleRb))
+        if (TryGetComponent<Rigidbody2D>(out var doodleRb))
         {
             doodleRb.gravityScale = 0; // Disable gravity
             doodleRb.velocity = Vector2.zero; // Stop movement
         }
 
-        Animator doodleAnimator = doodle.GetComponent<Animator>();
+        Animator doodleAnimator = GetComponent<Animator>();
         doodleAnimator.SetBool("isBlackHoleDeath", true); // Play black hole animation
         Debug.Log("Sucking started!");
         isBeingSucked = true; // Start sucking movement
@@ -61,7 +63,7 @@ public class LoseCondition : MonoBehaviour
     void MoveTowardsBlackHole()
     {
         Transform doodleTransform = transform;
-        Transform blackHoleTransform = GameObject.FindGameObjectWithTag(blackHoleTag).transform;
+        Transform blackHoleTransform = other.transform;
 
         if (doodleTransform != null && blackHoleTransform != null)
         {
@@ -74,19 +76,23 @@ public class LoseCondition : MonoBehaviour
             {
                 Debug.Log("Doodle reached the black hole!");
                 isBeingSucked = false; // Stop sucking
-                HandleLoseCondition();
+                // HandleLoseCondition();
             }
         }
+    }
+
+    public void BlackHoleDeathAnimationComplete(){
+        Debug.Log("Black hole death animation completed!");
+        Animator doodleAnimator = GetComponent<Animator>();
+        doodleAnimator.enabled = false; // 禁用Animator，保持当前状态
+        HandleLoseCondition();
     }
 
     // Handles collision with a monster.
     void HandleMonsterCollision(Collider2D monster)
     {
         if (IsHitFromAbove(monster))
-        if (IsHitFromAbove(monster))
         {
-            Destroy(monster.gameObject); // Destroy the monster
-            ApplyJumpForce();
             Destroy(monster.gameObject); // Destroy the monster
             ApplyJumpForce();
         }
@@ -105,7 +111,7 @@ public class LoseCondition : MonoBehaviour
             }
 
             PlayerControl playerControl = GetComponent<PlayerControl>();
-            playerControl.SetDead(true, this);
+            playerControl.SetDead(true);
             HandleLoseCondition();
         }
     }
@@ -113,8 +119,6 @@ public class LoseCondition : MonoBehaviour
     // Checks if Doodle is hitting the monster from above.
     bool IsHitFromAbove(Collider2D monster)
     {
-        float doodleBottomY = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
-        float monsterTopY = monster.transform.position.y + monster.bounds.extents.y;
         float doodleBottomY = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
         float monsterTopY = monster.transform.position.y + monster.bounds.extents.y;
         return doodleBottomY >= monsterTopY;
@@ -144,7 +148,7 @@ public class LoseCondition : MonoBehaviour
         GetComponent<Rigidbody2D>().velocity = Vector2.zero; // Stop player movement
 
         UIManager uiManager = FindObjectOfType<UIManager>();
-        uiManager.TriggerEndPage(gameObject.tag);
+        uiManager.TriggerEndPage(other.tag);
     }
 
 }

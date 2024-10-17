@@ -44,16 +44,15 @@ public class PlayerControl : MonoBehaviour
     private float lastDirection = -1; // 1 for right, -1 for left
 
     private bool isDead = false;
-    private LoseCondition loseCondition;
 
-    public void SetDead(bool dead,LoseCondition loseCondition){
+    public void SetDead(bool dead){
         isDead = dead;
-        this.loseCondition = loseCondition;
     }
 
     // This function gets called when the animation event triggers
     public void OnBlackHoleDeathComplete()
     {
+        LoseCondition loseCondition = GetComponent<LoseCondition>();
         // Call a function from LoseCondition script or any other script
         loseCondition.BlackHoleDeathAnimationComplete();
     }
