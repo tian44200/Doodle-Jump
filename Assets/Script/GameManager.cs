@@ -227,7 +227,6 @@ public class GameManager : MonoBehaviour
         SpawnPos.y += yPos + blackHoleHeight;
 
         GameObject bh = Instantiate(blackHolePrefab, SpawnPos, Quaternion.identity);
-        bh.GetComponent<LoseCondition>().SetUIManager(uiManager);
 
         //Spawn two tiles depending on the side of the blackHole
         if (SpawnPos.x >= 0)
@@ -264,8 +263,7 @@ public class GameManager : MonoBehaviour
         SpawnPos.x = xPos;
         SpawnPos.y += yPos + monsterHeight;
 
-        GameObject bh = Instantiate(monsterPrefab, SpawnPos, Quaternion.identity);
-        bh.GetComponent<LoseCondition>().SetUIManager(uiManager);
+        GameObject mst = Instantiate(monsterPrefab, SpawnPos, Quaternion.identity);
 
         //Spawn tile depending on the position of the monster
         if (SpawnPos.x >= 0)//Monster on the right, spawn the tile on the left
