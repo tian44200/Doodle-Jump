@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
-public class PlayerCollisionHandler : MonoBehaviour
+public class LoseCondition : MonoBehaviour
 {
     public GameObject uiManager; // Reference to the UIManager
     public string blackHoleTag = "BlackHole"; // Tag for the Black Hole object
@@ -82,7 +83,10 @@ public class PlayerCollisionHandler : MonoBehaviour
     void HandleMonsterCollision(Collider2D monster)
     {
         if (IsHitFromAbove(monster))
+        if (IsHitFromAbove(monster))
         {
+            Destroy(monster.gameObject); // Destroy the monster
+            ApplyJumpForce();
             Destroy(monster.gameObject); // Destroy the monster
             ApplyJumpForce();
         }
@@ -109,6 +113,8 @@ public class PlayerCollisionHandler : MonoBehaviour
     // Checks if Doodle is hitting the monster from above.
     bool IsHitFromAbove(Collider2D monster)
     {
+        float doodleBottomY = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
+        float monsterTopY = monster.transform.position.y + monster.bounds.extents.y;
         float doodleBottomY = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
         float monsterTopY = monster.transform.position.y + monster.bounds.extents.y;
         return doodleBottomY >= monsterTopY;

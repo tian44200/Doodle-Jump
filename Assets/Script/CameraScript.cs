@@ -7,10 +7,10 @@ public class CameraScript : MonoBehaviour
 
     public GameObject toFollow;
     private void FixedUpdate() {
+        //Camera moving up when Doodle exceed half of the screen
         if(toFollow.transform.position.y > transform.position.y){
             if(toFollow.transform.GetComponent<Rigidbody2D>().velocity.y >0){
                 Vector3 newPos = new Vector3(transform.position.x, toFollow.transform.position.y, transform.position.z);
-
                 transform.position = newPos;
             }
         }
