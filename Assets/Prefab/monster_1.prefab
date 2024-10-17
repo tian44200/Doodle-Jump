@@ -11,9 +11,7 @@ GameObject:
   - component: {fileID: 3898040394634770934}
   - component: {fileID: 8845835183127007461}
   - component: {fileID: 2729978666527937505}
-  - component: {fileID: 8765889865914446474}
-  - component: {fileID: -486106311884285154}
-  - component: {fileID: -9168395742887956973}
+  - component: {fileID: 7528967603213418149}
   m_Layer: 0
   m_Name: monster_1
   m_TagString: Monster
@@ -133,7 +131,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.82, y: 0.62}
   m_EdgeRadius: 0
---- !u!114 &8765889865914446474
+--- !u!114 &7528967603213418149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -142,13 +140,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7318822162454693950}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d8ef942f8a5dcc49ac10e7c45d66dbd, type: 3}
+  m_Script: {fileID: 11500000, guid: 13a8e80809a12417fa6a93370ff268b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiManager: {fileID: 0}
-  blackHoleTag: BlackHole
-  monsterTag: Monster
-  jumpForce: 30
   projectileTag: Projectile
   jumpSound: {fileID: -486106311884285154}
 --- !u!82 &-486106311884285154
