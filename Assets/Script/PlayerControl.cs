@@ -37,6 +37,21 @@ public class PlayerControl : MonoBehaviour
     private Animator animator;
     private float lastDirection = -1; // 1 for right, -1 for left
 
+    private bool isDead = false;
+    private LoseCondition loseCondition;
+
+    public void SetDead(bool dead,LoseCondition loseCondition){
+        isDead = dead;
+        this.loseCondition = loseCondition;
+    }
+
+    // This function gets called when the animation event triggers
+    public void OnBlackHoleDeathComplete()
+    {
+        // Call a function from LoseCondition script or any other script
+        loseCondition.BlackHoleDeathAnimationComplete();
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -51,6 +66,8 @@ public class PlayerControl : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isDead){
+
         // Get the horizontal input
         LeftRight = Input.GetAxis("Horizontal") * moveSpeed;
 
@@ -58,10 +75,12 @@ public class PlayerControl : MonoBehaviour
         if (LeftRight >= 0)
         {
             transform.rotation = Quaternion.Euler(180, 0, 180); // Moving Left
+            animator.SetFloat("LeftRight", -1);
         }
         else if (LeftRight < 0)
         {
             transform.rotation = Quaternion.Euler(0, 0, 0); // Moving Right
+            animator.SetFloat("LeftRight", 1);
         }
 
         // Apply velocity to the rigidbody to move the player
@@ -89,14 +108,17 @@ public class PlayerControl : MonoBehaviour
 
         // Call the function to check for screen wrapping
         WrapAroundBackground();
+        }
 
     }
 
     private void Update()
     {
+        if(!isDead){
         HandleMovementInput();
         HandleJumping();
         HandleShooting();
+        }
     }
 
     /********************************/

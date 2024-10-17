@@ -53,9 +53,24 @@ public class UIManager : MonoBehaviour
                     scrollableObjects.Add(obj.transform); // Add their transforms to the list
                 }
             }
-            StartCoroutine(SlideEndPageUp(colliderTag));
+
+//                     if (colliderTag == "BlackHole"){
+// StartCoroutine(WaitAndSlideEndPageUp(colliderTag));
+//         }else{
+    StartCoroutine(SlideEndPageUp(colliderTag));
+        // }
+            
         }
     }
+
+    //     IEnumerator WaitAndSlideEndPageUp(string colliderTag)
+    // {
+    //     // Wait for 1 second
+    //     yield return new WaitForSeconds(2f);
+
+    //     // Start sliding the end page up
+    //     StartCoroutine(SlideEndPageUp(colliderTag));
+    // }
 
     IEnumerator SlideEndPageUp(string colliderTag)
     {
