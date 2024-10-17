@@ -1,37 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.XR;
 
-/// <summary>
-/// The LoseCondition class is responsible for handling various lose conditions in the game.
-/// It detects collisions with different objects such as black holes, monsters, and projectiles,
-/// and triggers appropriate responses. When the player (Doodle) collides with these objects,
-/// the class determines whether the player should lose the game or if other actions should be taken,
-/// such as destroying a monster or applying a jump force. It also interacts with the UIManager
-/// to trigger the end page and with the ScoreManager to handle score updates when the player loses.
-/// </summary>
-public class LoseCondition : MonoBehaviour
+public class PlayerCollisionHandler : MonoBehaviour
 {
     public GameObject uiManager; // Reference to the UIManager
     public string blackHoleTag = "BlackHole"; // Tag for the Black Hole object
     public string monsterTag = "Monster"; // Tag for the Monster object
+    public string fallTag = "FallCollider"; // Tag for the FallCollider object
     public float jumpForce = 30f; // The jump force when Doodle destroys a monster (can be set via Inspector)
-    public string projectileTag = "Projectile"; // Tag for the projectile object
-
     public float suckSpeed = 0.5f; // The speed at which the Doodle is sucked into the black hole
-
     private bool isBeingSucked = false; // Flag to check if the Doodle is being sucked into the black hole
-
-    /// <summary>
-    /// Sets the UIManager reference.
-    /// </summary>
-    /// <param name="ui">The UIManager GameObject.</param>
-    public void SetUIManager(GameObject ui)
-    {
-        uiManager = ui;
-    }
 
     void Update()
     {
@@ -42,179 +21,124 @@ public class LoseCondition : MonoBehaviour
         }
     }
 
-    public void BlackHoleDeathAnimationComplete(){
-        Debug.Log("Black hole death animation completed!");
-        Animator doodleAnimator = GameObject.FindGameObjectWithTag("Doodle").GetComponent<Animator>();
-        doodleAnimator.enabled = false; // 禁用Animator，保持当前状态
-        HandleLoseCondition(GameObject.FindGameObjectWithTag("Doodle").GetComponent<Collider2D>());
-    }
-
-    /// <summary>
-    /// Called when another collider enters the trigger collider attached to this object.
-    /// </summary>
-    /// <param name="other">The collider that entered the trigger.</param>
+    // Called when another collider enters the trigger collider attached to this object.
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Doodle"))
+        if (other.CompareTag(blackHoleTag))
         {
-            if (CompareTag(monsterTag))
-            {
-                HandleMonsterCollision(other);
-            }
-            else
-            {
-                PlayerControl playerControl = other.GetComponent<PlayerControl>();
-                playerControl.SetDead(true, this);
-                if (CompareTag(blackHoleTag))
-                {
-                    Debug.Log("Doodle entered the black hole! in trigger function");
-                    HandleBlackHoleEntry(other);
-                }
-                else
-                {
-                    HandleLoseCondition(other);
-                }
-
-            }
-
+            PlayerControl playerControl = other.GetComponent<PlayerControl>();
+            playerControl.SetDead(true, this);
+            HandleBlackHoleEntry(other);
         }
-        else if (other.CompareTag(projectileTag))
+        else if (other.CompareTag(monsterTag))
         {
-            HandleProjectileCollision(other);
-}
+            HandleMonsterCollision(other);
+        }else if (other.CompareTag(fallTag)){
+            HandleLoseCondition();
+        }
     }
 
-    /// <summary>
-    /// Handles entry into a black hole.
-    /// </summary>
-    /// <param name="doodle">The Doodle collider.</param>
+    // Handles entry into a black hole.
     void HandleBlackHoleEntry(Collider2D doodle)
-{
-    Debug.Log("Doodle entered the black hole!");
-    // 禁用 doodle 的重力
-    if (doodle.TryGetComponent<Rigidbody2D>(out var doodleRb))
     {
-        doodleRb.gravityScale = 0; // 禁用重力
-        doodleRb.velocity = Vector2.zero; // 停止移动
-    }
-    Animator doodleAnimator = doodle.GetComponent<Animator>();
-    doodleAnimator.SetBool("isBlackHoleDeath",true); // 播放黑洞动画
-    Debug.Log("Sucking started!");
-    isBeingSucked = true; // 开始移动
-    // HandleLoseCondition(doodle); // 在吸入结束后处理结束条件
-}
+        Debug.Log("Doodle entered the black hole!");
 
-
-void MoveTowardsBlackHole()
-{
-    Transform doodleTransform = GameObject.FindGameObjectWithTag("Doodle").transform;
-    Transform blackHoleTransform = GameObject.FindGameObjectWithTag("BlackHole").transform;
-    if (doodleTransform != null && blackHoleTransform != null)
-    {
-        // 使用 Lerp 让 doodle 移动到 black hole 中心
-        doodleTransform.position = Vector2.Lerp(doodleTransform.position, blackHoleTransform.position, suckSpeed * Time.deltaTime);
-
-        // 当接近 black hole 时，停止吸引
-        float distance = Vector2.Distance(doodleTransform.position, blackHoleTransform.position);
-        if (distance < 0.1f)
+        // Disable Doodle's gravity
+        if (doodle.TryGetComponent<Rigidbody2D>(out var doodleRb))
         {
-            Debug.Log("Doodle reached the black hole!");
-            Debug.Log("Sucking ended!");
-            isBeingSucked = false; // 停止移动
-            // doodleAnimator.SetBool("isBlackHoleDeath", false); // 播放黑洞动画
+            doodleRb.gravityScale = 0; // Disable gravity
+            doodleRb.velocity = Vector2.zero; // Stop movement
+        }
+
+        Animator doodleAnimator = doodle.GetComponent<Animator>();
+        doodleAnimator.SetBool("isBlackHoleDeath", true); // Play black hole animation
+        Debug.Log("Sucking started!");
+        isBeingSucked = true; // Start sucking movement
+    }
+
+    // Moves Doodle towards the black hole center.
+    void MoveTowardsBlackHole()
+    {
+        Transform doodleTransform = transform;
+        Transform blackHoleTransform = GameObject.FindGameObjectWithTag(blackHoleTag).transform;
+
+        if (doodleTransform != null && blackHoleTransform != null)
+        {
+            // Lerp Doodle towards the black hole
+            doodleTransform.position = Vector2.Lerp(doodleTransform.position, blackHoleTransform.position, suckSpeed * Time.deltaTime);
+
+            // When close enough to the black hole, stop the movement
+            float distance = Vector2.Distance(doodleTransform.position, blackHoleTransform.position);
+            if (distance < 0.1f)
+            {
+                Debug.Log("Doodle reached the black hole!");
+                isBeingSucked = false; // Stop sucking
+                HandleLoseCondition();
+            }
         }
     }
-}
 
-
-/// <summary>
-/// Handles collision with a monster.
-/// </summary>
-/// <param name="doodle">The Doodle collider.</param>
-void HandleMonsterCollision(Collider2D doodle)
-{
-    if (IsHitFromAbove(doodle))
+    // Handles collision with a monster.
+    void HandleMonsterCollision(Collider2D monster)
     {
-        Destroy(gameObject); // Destroy the monster
-        ApplyJumpForce(doodle);
-    }
-    else
-    {
-        // 从doodle的子对象中找到StarEffects
-        Transform starEffectsTransform = doodle.transform.Find("StarEffects");
-        if (starEffectsTransform != null)
+        if (IsHitFromAbove(monster))
         {
-            GameObject starEffects = starEffectsTransform.gameObject;
-            starEffects.SetActive(true);  // 激活StarEffects效果
+            Destroy(monster.gameObject); // Destroy the monster
+            ApplyJumpForce();
         }
         else
         {
-            Debug.LogError("StarEffects not found under Doodle.");
+            // Activate StarEffects under Doodle
+            Transform starEffectsTransform = transform.Find("StarEffects");
+            if (starEffectsTransform != null)
+            {
+                GameObject starEffects = starEffectsTransform.gameObject;
+                starEffects.SetActive(true);  // Activate StarEffects effect
+            }
+            else
+            {
+                Debug.LogError("StarEffects not found under Doodle.");
+            }
+
+            PlayerControl playerControl = GetComponent<PlayerControl>();
+            playerControl.SetDead(true, this);
+            HandleLoseCondition();
         }
-        PlayerControl playerControl = doodle.GetComponent<PlayerControl>();
-        playerControl.SetDead(true, this);
-        HandleLoseCondition(doodle);
     }
-}
 
-/// <summary>
-/// Checks if the Doodle is hitting the monster from above.
-/// </summary>
-/// <param name="doodle">The Doodle collider.</param>
-/// <returns>True if the Doodle is hitting from above, false otherwise.</returns>
-bool IsHitFromAbove(Collider2D doodle)
-{
-    float doodleBottomY = doodle.transform.position.y - doodle.bounds.extents.y;
-    float monsterTopY = transform.position.y + GetComponent<Collider2D>().bounds.extents.y;
-    return doodleBottomY >= monsterTopY;
-}
-
-/// <summary>
-/// Applies jump force to the Doodle.
-/// </summary>
-/// <param name="doodle">The Doodle collider.</param>
-void ApplyJumpForce(Collider2D doodle)
-{
-    Rigidbody2D doodleRb = doodle.GetComponent<Rigidbody2D>();
-    if (doodleRb != null)
+    // Checks if Doodle is hitting the monster from above.
+    bool IsHitFromAbove(Collider2D monster)
     {
-        doodleRb.velocity = new Vector2(doodleRb.velocity.x, 0); // Reset vertical velocity
-        doodleRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse); // Apply the jump force
+        float doodleBottomY = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
+        float monsterTopY = monster.transform.position.y + monster.bounds.extents.y;
+        return doodleBottomY >= monsterTopY;
     }
-}
 
-/// <summary>
-/// Handles the lose condition and triggers the end page.
-/// </summary>
-/// <param name="doodle">The Doodle collider.</param>
-void HandleLoseCondition(Collider2D doodle)
-{
-    Debug.Log("Doodle lost!");
-    GameManager gameManager = FindObjectOfType<GameManager>();
-    gameManager.SetIsDead(true);
-    // 禁用 Doodle 的碰撞体，避免进一步的碰撞
-    Collider2D doodleCollider = doodle.GetComponent<Collider2D>();
-    if (doodleCollider != null)
+    // Applies jump force to Doodle after killing a monster.
+    void ApplyJumpForce()
     {
-        doodleCollider.enabled = false;  // 禁用碰撞
+        Rigidbody2D doodleRb = GetComponent<Rigidbody2D>();
+        if (doodleRb != null)
+        {
+            doodleRb.velocity = new Vector2(doodleRb.velocity.x, 0); // Reset vertical velocity
+            doodleRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse); // Apply the jump force
+        }
     }
-    ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
-    scoreManager.OnPlayerDeath();
-    doodle.GetComponent<Rigidbody2D>().velocity = Vector2.zero; // Stop player movement
-    uiManager.GetComponent<UIManager>().TriggerEndPage(gameObject.tag);
-}
 
-/// <summary>
-/// Handles when a projectile hits the monster.
-/// </summary>
-/// <param name="projectile">The projectile collider.</param>
-void HandleProjectileCollision(Collider2D projectile)
-{
-    if (this.CompareTag(monsterTag))
+    // Handles the lose condition and triggers the end page.
+    void HandleLoseCondition()
     {
-        Destroy(this.gameObject); // Destroy the monster
-        Destroy(projectile.gameObject); // Destroy the projectile
-        Debug.Log("Monster destroyed by projectile!");
+        Debug.Log("Doodle lost!");
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        gameManager.SetIsDead(true);
+        GetComponent<Collider2D>().enabled = false; // Disable further collisions
+
+        ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
+        scoreManager.OnPlayerDeath();
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero; // Stop player movement
+
+        UIManager uiManager = FindObjectOfType<UIManager>();
+        uiManager.TriggerEndPage(gameObject.tag);
     }
-}
+
 }
