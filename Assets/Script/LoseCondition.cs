@@ -11,6 +11,10 @@ public class LoseCondition : MonoBehaviour
     public float jumpForce = 30f; // The jump force when Doodle destroys a monster (can be set via Inspector)
     public string projectileTag = "Projectile"; // Tag for the projectile object
 
+    private string destroyerTag = "FallCollider"; // Tag for the destroyer object
+    public AudioSource jumpSound; // Reference to the AudioSource for the jump sound
+
+
     // Detect when Doodle collides with any object
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -21,10 +25,9 @@ public class LoseCondition : MonoBehaviour
         else if (other.CompareTag(monsterTag))
         {
             HandleMonsterCollision(other);
-        }
-        else if (other.CompareTag(projectileTag))
+        }else if (other.CompareTag(destroyerTag))
         {
-            HandleProjectileCollision(other);
+            HandleLoseCondition();
         }
     }
 
@@ -34,18 +37,31 @@ public class LoseCondition : MonoBehaviour
         HandleLoseCondition();
     }
 
+    /// <summary>
+    /// Handles collision with a monster.
+    /// </summary>
+    /// <param name="doodle">The Doodle collider.</param>
     void HandleMonsterCollision(Collider2D monster)
     {
         if (IsHitFromAbove(monster))
-        {
-            Destroy(monster.gameObject); // Destroy the monster
-            ApplyJumpForce();
-        }
-        else
-        {
-            HandleLoseCondition();
-        }
+{
+    Destroy(monster.gameObject); // Destroy the monster
+    ApplyJumpForce();
+    // Play the sound before destroying the object
+    if (jumpSound != null)
+    {
+        jumpSound.Play();
     }
+    // Destroy the monster with a delay to allow the sound to play
+    Destroy(monster.gameObject, jumpSound.clip.length); // Delay destruction by the length of the audio clip
+}
+else
+{
+    HandleLoseCondition();
+}
+
+    }
+
 
     bool IsHitFromAbove(Collider2D monster)
     {
@@ -75,8 +91,4 @@ public class LoseCondition : MonoBehaviour
         uiManager.GetComponent<UIManager>().TriggerEndPage(gameObject.tag);
     }
 
-    void HandleProjectileCollision(Collider2D projectile)
-    {
-        // Handle the collision with the projectile (if necessary, based on design)
-    }
 }
