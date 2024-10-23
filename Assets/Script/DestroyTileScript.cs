@@ -17,7 +17,6 @@ public class DestroyTileScript : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if(other.tag == "Monster"|| other.tag == "BlackHole" || other.tag == "Platform" || other.tag == "Spring" || other.tag == "Hat" ||other.tag == "JetPack"){
-            Debug.Log("Destroying " + other.tag);
             Destroy(other.gameObject);
         }
     }

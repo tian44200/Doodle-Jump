@@ -52,6 +52,12 @@ public class PlayerControl : MonoBehaviour
     public AudioClip jetPackSound;
     public AudioClip hatSound;
 
+    private bool isDead = false;
+
+    public void SetDead(bool dead){
+        isDead = dead;
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -66,6 +72,8 @@ public class PlayerControl : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isDead){
+
         // Get the horizontal input
         LeftRight = Input.GetAxis("Horizontal") * moveSpeed;
 
@@ -73,10 +81,12 @@ public class PlayerControl : MonoBehaviour
         if (LeftRight >= 0)
         {
             transform.rotation = Quaternion.Euler(180, 0, 180); // Moving Left
+            animator.SetFloat("LeftRight", -1);
         }
         else if (LeftRight < 0)
         {
             transform.rotation = Quaternion.Euler(0, 0, 0); // Moving Right
+            animator.SetFloat("LeftRight", 1);
         }
 
         if (hat.activeSelf == true)
@@ -106,14 +116,17 @@ public class PlayerControl : MonoBehaviour
 
         // Call the function to check for screen wrapping
         WrapAroundBackground();
+        }
 
     }
 
     private void Update()
     {
+        if(!isDead){
         HandleMovementInput();
         HandleJumping();
         HandleShooting();
+        }
     }
 
     /********************************/

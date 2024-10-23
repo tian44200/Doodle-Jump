@@ -53,7 +53,10 @@ public class UIManager : MonoBehaviour
                     scrollableObjects.Add(obj.transform); // Add their transforms to the list
                 }
             }
-            StartCoroutine(SlideEndPageUp(colliderTag));
+
+    StartCoroutine(SlideEndPageUp(colliderTag));
+        // }
+            
         }
     }
 
