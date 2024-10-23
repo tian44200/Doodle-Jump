@@ -8,11 +8,12 @@ public class LoseCondition : MonoBehaviour
     public GameObject uiManager; // Reference to the UIManager
     public string blackHoleTag = "BlackHole"; // Tag for the Black Hole object
     public string monsterTag = "Monster"; // Tag for the Monster object
-    public string fallTag = "FallCollider"; // Tag for the FallCollider object
     public float jumpForce = 30f; // The jump force when Doodle destroys a monster (can be set via Inspector)
     public float suckSpeed = 0.5f; // The speed at which the Doodle is sucked into the black hole
     private bool isBeingSucked = false; // Flag to check if the Doodle is being sucked into the black hole
     private Collider2D other; // Reference to the Doodle's collider
+    private string destroyerTag = "FallCollider"; // Tag for the destroyer object
+    public AudioSource jumpSound; // Reference to the AudioSource for the jump sound
 
     void Update()
     {
@@ -36,7 +37,9 @@ public class LoseCondition : MonoBehaviour
         else if (other.CompareTag(monsterTag))
         {
             HandleMonsterCollision(other);
-        }else if (other.CompareTag(fallTag)){
+
+        }else if (other.CompareTag(destroyerTag))
+        {
             HandleLoseCondition();
         }
     }
@@ -95,6 +98,10 @@ public class LoseCondition : MonoBehaviour
         {
             Destroy(monster.gameObject); // Destroy the monster
             ApplyJumpForce();
+            // Play the sound before destroying the object
+    if (jumpSound != null)
+    {
+        jumpSound.Play();
         }
         else
         {
@@ -115,6 +122,16 @@ public class LoseCondition : MonoBehaviour
             HandleLoseCondition();
         }
     }
+    // Destroy the monster with a delay to allow the sound to play
+    Destroy(monster.gameObject, jumpSound.clip.length); // Delay destruction by the length of the audio clip
+}
+else
+{
+    HandleLoseCondition();
+}
+
+    }
+
 
     // Checks if Doodle is hitting the monster from above.
     bool IsHitFromAbove(Collider2D monster)
