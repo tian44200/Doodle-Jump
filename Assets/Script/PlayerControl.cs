@@ -58,14 +58,6 @@ public class PlayerControl : MonoBehaviour
         isDead = dead;
     }
 
-    // This function gets called when the animation event triggers
-    public void OnBlackHoleDeathComplete()
-    {
-        LoseCondition loseCondition = GetComponent<LoseCondition>();
-        // Call a function from LoseCondition script or any other script
-        loseCondition.BlackHoleDeathAnimationComplete();
-    }
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();

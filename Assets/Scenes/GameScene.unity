@@ -2121,8 +2121,8 @@ MonoBehaviour:
   blackHoleTag: BlackHole
   monsterTag: Monster
   jumpForce: 30
-  projectileTag: Projectile
-  jumpSound: {fileID: 1298075551}
+  suckSpeed: 0.5
+  jumpSound: {fileID: 0}
 --- !u!82 &1298075551
 AudioSource:
   m_ObjectHideFlags: 0

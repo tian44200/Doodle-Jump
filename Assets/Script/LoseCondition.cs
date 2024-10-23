@@ -14,6 +14,8 @@ public class LoseCondition : MonoBehaviour
     private Collider2D other; // Reference to the Doodle's collider
     private string destroyerTag = "FallCollider"; // Tag for the destroyer object
     public AudioSource jumpSound; // Reference to the AudioSource for the jump sound
+    private bool isHandlingBlackHole = false;
+
 
     void Update()
     {
@@ -28,38 +30,62 @@ public class LoseCondition : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         this.other = other;
-        if (other.CompareTag(blackHoleTag))
+        if (other.CompareTag(blackHoleTag) && !isHandlingBlackHole)
         {
+            isHandlingBlackHole = true;
             PlayerControl playerControl = GetComponent<PlayerControl>();
             playerControl.SetDead(true);
-            HandleBlackHoleEntry();
+            StartCoroutine(HandleBlackHoleEntry(other.transform));
         }
         else if (other.CompareTag(monsterTag))
         {
             HandleMonsterCollision(other);
 
-        }else if (other.CompareTag(destroyerTag))
+        }
+        else if (other.CompareTag(destroyerTag))
         {
             HandleLoseCondition();
         }
     }
 
-    // Handles entry into a black hole.
-    void HandleBlackHoleEntry()
+    IEnumerator HandleBlackHoleEntry(Transform blackHoleTransform)
     {
         Debug.Log("Doodle entered the black hole!");
 
-        // Disable Doodle's gravity
+        // Disable Doodle's gravity and movement
         if (TryGetComponent<Rigidbody2D>(out var doodleRb))
         {
-            doodleRb.gravityScale = 0; // Disable gravity
-            doodleRb.velocity = Vector2.zero; // Stop movement
+            doodleRb.gravityScale = 0;
+            doodleRb.velocity = Vector2.zero;
+            doodleRb.isKinematic = true; // Ensure physics don't interfere
         }
 
-        Animator doodleAnimator = GetComponent<Animator>();
-        doodleAnimator.SetBool("isBlackHoleDeath", true); // Play black hole animation
-        Debug.Log("Sucking started!");
-        isBeingSucked = true; // Start sucking movement
+        Vector3 startPosition = transform.position;
+        Vector3 startScale = transform.localScale;
+        float duration = 1f; // Total duration of the effect
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+
+            // Move towards black hole
+            transform.position = Vector3.Lerp(startPosition, blackHoleTransform.position, t);
+
+            // Shrink Doodle
+            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+
+            yield return null;
+        }
+
+        // Ensure final position and scale
+        transform.position = blackHoleTransform.position;
+        transform.localScale = Vector3.zero;
+
+        yield return new WaitForSeconds(0.1f); // Short additional delay
+
+        HandleLoseCondition();
     }
 
     // Moves Doodle towards the black hole center.
@@ -84,13 +110,6 @@ public class LoseCondition : MonoBehaviour
         }
     }
 
-    public void BlackHoleDeathAnimationComplete(){
-        Debug.Log("Black hole death animation completed!");
-        Animator doodleAnimator = GetComponent<Animator>();
-        doodleAnimator.enabled = false; // 禁用Animator，保持当前状态
-        HandleLoseCondition();
-    }
-
     // Handles collision with a monster.
     void HandleMonsterCollision(Collider2D monster)
     {
@@ -99,9 +118,12 @@ public class LoseCondition : MonoBehaviour
             Destroy(monster.gameObject); // Destroy the monster
             ApplyJumpForce();
             // Play the sound before destroying the object
-    if (jumpSound != null)
-    {
-        jumpSound.Play();
+            if (jumpSound != null)
+            {
+                jumpSound.Play();
+            }
+            // Destroy the monster with a delay to allow the sound to play
+            Destroy(monster.gameObject, jumpSound != null ? jumpSound.clip.length : 0f); // Delay destruction by the length of the audio clip
         }
         else
         {
@@ -117,55 +139,56 @@ public class LoseCondition : MonoBehaviour
                 Debug.LogError("StarEffects not found under Doodle.");
             }
 
-            PlayerControl playerControl = GetComponent<PlayerControl>();
-            playerControl.SetDead(true);
             HandleLoseCondition();
         }
     }
-    // Destroy the monster with a delay to allow the sound to play
-    Destroy(monster.gameObject, jumpSound.clip.length); // Delay destruction by the length of the audio clip
-}
-else
+
+
+
+
+// Checks if Doodle is hitting the monster from above.
+bool IsHitFromAbove(Collider2D monster)
 {
-    HandleLoseCondition();
+    float doodleBottomY = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
+    float monsterTopY = monster.transform.position.y + monster.bounds.extents.y;
+    return doodleBottomY >= monsterTopY;
 }
 
-    }
-
-
-    // Checks if Doodle is hitting the monster from above.
-    bool IsHitFromAbove(Collider2D monster)
+// Applies jump force to Doodle after killing a monster.
+void ApplyJumpForce()
+{
+    Rigidbody2D doodleRb = GetComponent<Rigidbody2D>();
+    if (doodleRb != null)
     {
-        float doodleBottomY = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
-        float monsterTopY = monster.transform.position.y + monster.bounds.extents.y;
-        return doodleBottomY >= monsterTopY;
+        doodleRb.velocity = new Vector2(doodleRb.velocity.x, 0); // Reset vertical velocity
+        doodleRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse); // Apply the jump force
     }
+}
 
-    // Applies jump force to Doodle after killing a monster.
-    void ApplyJumpForce()
+// Handles the lose condition and triggers the end page.
+void HandleLoseCondition()
+{
+    Debug.Log("Doodle lost!");
+    GameManager gameManager = FindObjectOfType<GameManager>();
+    gameManager.SetIsDead(true);
+    PlayerControl playerControl = GetComponent<PlayerControl>();
+    playerControl.SetDead(true);
+    GetComponent<Collider2D>().enabled = false; // Disable further collisions
+
+    ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
+    scoreManager.OnPlayerDeath();
+    GetComponent<Rigidbody2D>().velocity = Vector2.zero; // Stop player movement
+
+    UIManager uiManager = FindObjectOfType<UIManager>();
+    if (uiManager != null)
     {
-        Rigidbody2D doodleRb = GetComponent<Rigidbody2D>();
-        if (doodleRb != null)
-        {
-            doodleRb.velocity = new Vector2(doodleRb.velocity.x, 0); // Reset vertical velocity
-            doodleRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse); // Apply the jump force
-        }
+        uiManager.TriggerEndPage("BlackHole");
     }
-
-    // Handles the lose condition and triggers the end page.
-    void HandleLoseCondition()
+    else
     {
-        Debug.Log("Doodle lost!");
-        GameManager gameManager = FindObjectOfType<GameManager>();
-        gameManager.SetIsDead(true);
-        GetComponent<Collider2D>().enabled = false; // Disable further collisions
-
-        ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
-        scoreManager.OnPlayerDeath();
-        GetComponent<Rigidbody2D>().velocity = Vector2.zero; // Stop player movement
-
-        UIManager uiManager = FindObjectOfType<UIManager>();
-        uiManager.TriggerEndPage(other.tag);
+        Debug.LogError("UIManager not found!");
     }
 
 }
+
+} 

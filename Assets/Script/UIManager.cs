@@ -54,23 +54,11 @@ public class UIManager : MonoBehaviour
                 }
             }
 
-//                     if (colliderTag == "BlackHole"){
-// StartCoroutine(WaitAndSlideEndPageUp(colliderTag));
-//         }else{
     StartCoroutine(SlideEndPageUp(colliderTag));
         // }
             
         }
     }
-
-    //     IEnumerator WaitAndSlideEndPageUp(string colliderTag)
-    // {
-    //     // Wait for 1 second
-    //     yield return new WaitForSeconds(2f);
-
-    //     // Start sliding the end page up
-    //     StartCoroutine(SlideEndPageUp(colliderTag));
-    // }
 
     IEnumerator SlideEndPageUp(string colliderTag)
     {
