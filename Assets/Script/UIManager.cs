@@ -89,7 +89,18 @@ public class UIManager : MonoBehaviour
         endPageRect.anchoredPosition = Vector2.zero; // Ensure it's exactly at the top
         // Wait for 2 seconds in order to let doodle finish its fall
         yield return new WaitForSeconds(2f);
+        CleanSounds(); // Destroy all monsters
         Time.timeScale = 0; // Optional: Pause the game
+    }
+
+    public void CleanSounds()
+    {
+        // Destroy all objects with the tag "Monster"
+        GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
+        foreach (GameObject monst in monsters)
+        {
+            Destroy(monst);
+        }
     }
 
     // Method to go back to the main menu

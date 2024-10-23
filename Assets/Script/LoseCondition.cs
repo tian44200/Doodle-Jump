@@ -10,6 +10,8 @@ public class LoseCondition : MonoBehaviour
     public string monsterTag = "Monster"; // Tag for the Monster object
     public float jumpForce = 30f; // The jump force when Doodle destroys a monster (can be set via Inspector)
     public string projectileTag = "Projectile"; // Tag for the projectile object
+
+    private string destroyerTag = "FallCollider"; // Tag for the destroyer object
     public AudioSource jumpSound; // Reference to the AudioSource for the jump sound
 
 
@@ -23,10 +25,9 @@ public class LoseCondition : MonoBehaviour
         else if (other.CompareTag(monsterTag))
         {
             HandleMonsterCollision(other);
-        }
-        else if (other.CompareTag(projectileTag))
+        }else if (other.CompareTag(destroyerTag))
         {
-            HandleProjectileCollision(other);
+            HandleLoseCondition();
         }
     }
 
@@ -43,23 +44,23 @@ public class LoseCondition : MonoBehaviour
     void HandleMonsterCollision(Collider2D monster)
     {
         if (IsHitFromAbove(monster))
-        {
-            Destroy(monster.gameObject); // Destroy the monster
-            ApplyJumpForce();
-            // Play the sound before destroying the object
-            if (jumpSound != null)
-            {
-                jumpSound.Play();
-            }
-            // Destroy the monster with a delay to allow the sound to play
-            // BUG DES FOIS, MAIS JE NE COMPREND PAS TROP...
-            // 
-            Destroy(gameObject, jumpSound.clip.length); // Delay destruction by the length of the audio clip
-        else
-        {
-            HandleLoseCondition();
-        }
-}}
+{
+    Destroy(monster.gameObject); // Destroy the monster
+    ApplyJumpForce();
+    // Play the sound before destroying the object
+    if (jumpSound != null)
+    {
+        jumpSound.Play();
+    }
+    // Destroy the monster with a delay to allow the sound to play
+    Destroy(monster.gameObject, jumpSound.clip.length); // Delay destruction by the length of the audio clip
+}
+else
+{
+    HandleLoseCondition();
+}
+
+    }
 
 
     bool IsHitFromAbove(Collider2D monster)
