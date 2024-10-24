@@ -281,7 +281,7 @@ public class PlayerControl : MonoBehaviour
     void HandleShooting()
     {
         // Trigger shooting when the up arrow is pressed
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && hat.activeSelf == false && jetPack.activeSelf == false)
         {
             animator.SetBool("isShooting", true);
             mouth.SetActive(true);
