@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     private float minBreakY = 0.5f;
     private float maxBreakY = 0.58f;
 
+    //To have a random speed
     private float minSpeed = 0.7f;
     private float maxSpeed = 1.8f;
 
@@ -161,8 +162,6 @@ public class GameManager : MonoBehaviour
         GameObject movingPlateform = Instantiate(movingTilePrefab, SpawnPos, Quaternion.identity);
 
         float speed = Random.Range(minSpeed, Mathf.Max(minSpeed,maxSpeed*difficulty));
-        Debug.Log(minSpeed + " max speed : " +  maxSpeed*difficulty + " diff : " + difficulty);
-        Debug.Log(speed);
         movingPlateform.GetComponent<MovingTile>().speed = speed;
         return movingPlateform;
     }

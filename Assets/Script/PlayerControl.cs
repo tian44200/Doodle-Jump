@@ -93,7 +93,7 @@ public class PlayerControl : MonoBehaviour
         {
 
             itemTimer -= Time.deltaTime;
-            if (itemTimer <= 0)
+            if (itemTimer <= 1.5f)
             {
                 hat.SetActive(false);
                 toolSource.Stop();  // Stop sound of hat
@@ -106,10 +106,7 @@ public class PlayerControl : MonoBehaviour
             {
                 jetPackAnimator.SetBool("endJetPack", true);
             }
-            if (itemTimer <= 0)
-            {
-                jetPack.SetActive(false);
-            }
+
         }
         // Apply velocity to the rigidbody to move the player
         rb.velocity = new Vector2(LeftRight, rb.velocity.y);
