@@ -32,6 +32,9 @@ public class GameManager : MonoBehaviour
     private float minBreakY = 0.5f;
     private float maxBreakY = 0.58f;
 
+    private float minSpeed = 0.7f;
+    private float maxSpeed = 1.8f;
+
     private float tileLenght = 0.250f;
     private float tileHeight = 0.130f;
 
@@ -76,23 +79,18 @@ public class GameManager : MonoBehaviour
             GameObject returnedTile;
             if (Doodle.transform.position.y >= SpawnPos.y - spawnLimit)
             {
-                difficulty = Mathf.Min(1, scoreManager.gethighestPoint() / 500f);
+                difficulty = Mathf.Min(1, scoreManager.gethighestPoint() / maxDiff);
                 returnedTile = SpawnPlateform();
 
                 //Spawn Objects on tile depending on probability
-                if (Random.value < 0.10)
-                {
-                    SpawnSpring(returnedTile);
+                if (Random.value < 0.1){
+                    SpawnObject(springPrefab,returnedTile);
+                }else if (Random.value < 0.1){
+                    SpawnObject(hatPrefab,returnedTile);
+                }else if (Random.value < 0.1){
+                    SpawnObject(jetPackPrefab,returnedTile);
                 }
-                else if (Random.value < 0.1)
-                {
-                    SpawnHat(returnedTile);
-                }
-                else if (Random.value < 0.1)
-                {
-                    SpawnJetPack(returnedTile);
-                }
-
+            
                 onSpring = playerControl.getUsedSpring();
                 if (DoodleHat.activeSelf == false && DoodleJetPack.activeSelf == false && onSpring == false)
                 {
@@ -117,18 +115,18 @@ public class GameManager : MonoBehaviour
                 //Spawn Objects on tile depending on probability
                 if (Random.value <= 0.2)
                 {
-                    returnedTile = SpawnMovingPlateform();
+                    returnedTile = SpawnMovingPlateform(difficulty);
                     if (Random.value < 0.1)
                     {
-                        SpawnSpring(returnedTile);
+                        SpawnObject(springPrefab,returnedTile);
                     }
                     else if (Random.value < 0.1)
                     {
-                        SpawnHat(returnedTile);
+                        SpawnObject(hatPrefab,returnedTile);
                     }
                     else if (Random.value < 0.1)
                     {
-                        SpawnJetPack(returnedTile);
+                        SpawnObject(jetPackPrefab,returnedTile);
                     }
                 }
             }
@@ -141,8 +139,7 @@ public class GameManager : MonoBehaviour
     {
         //Spawn between screen width and screnn height
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minY, Mathf.Max(0.5f, maxY * difficulty));
-        Debug.Log(yPos + "nomaar");
+        float yPos = Random.Range(minY, Mathf.Max(minY, maxY * difficulty));
 
         SpawnPos.x = xPos;
         SpawnPos.y += yPos;
@@ -153,15 +150,21 @@ public class GameManager : MonoBehaviour
 
 
 
-    private GameObject SpawnMovingPlateform()
+    private GameObject SpawnMovingPlateform(float difficulty)
     {
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minMoveY, Mathf.Max(0.5f, maxMoveY * difficulty));
-        Debug.Log(yPos + "move");
+        float yPos = Random.Range(minMoveY, Mathf.Max(minMoveY, maxMoveY * difficulty));
 
         SpawnPos.x = xPos;
         SpawnPos.y += yPos;
-        return Instantiate(movingTilePrefab, SpawnPos, Quaternion.identity);
+
+        GameObject movingPlateform = Instantiate(movingTilePrefab, SpawnPos, Quaternion.identity);
+
+        float speed = Random.Range(minSpeed, Mathf.Max(minSpeed,maxSpeed*difficulty));
+        Debug.Log(minSpeed + " max speed : " +  maxSpeed*difficulty + " diff : " + difficulty);
+        Debug.Log(speed);
+        movingPlateform.GetComponent<MovingTile>().speed = speed;
+        return movingPlateform;
     }
 
 
@@ -170,9 +173,7 @@ public class GameManager : MonoBehaviour
     private GameObject SpawnBreakingPlateform()
     {
         float xPos = Random.Range(-screenWidth, screenWidth);
-        float yPos = Random.Range(minBreakY, Mathf.Max(0.5f, maxBreakY * difficulty));
-        Debug.Log(yPos + "break");
-
+        float yPos = Random.Range(minBreakY, Mathf.Max(minBreakY, maxBreakY * difficulty));
         SpawnPos.x = xPos;
         SpawnPos.y += yPos;
         return Instantiate(breakingTilePrefab, SpawnPos, Quaternion.identity);
@@ -181,40 +182,20 @@ public class GameManager : MonoBehaviour
 
 
 
-    private void SpawnSpring(GameObject dad)
-    {
+    private void SpawnObject(GameObject prefab, GameObject dad){
         float xPos = Random.Range(-tileLenght, tileLenght);
 
         SpawnPos.x += xPos;
-        SpawnPos.y += tileHeight;
-        Instantiate(springPrefab, SpawnPos, Quaternion.identity, dad.transform);
+
+        if(prefab.name == "PickableJetPack"){
+            SpawnPos.y += tileHeight * 2f;
+        }else{
+            SpawnPos.y += tileHeight;
+        }
+        
+        Instantiate(prefab, SpawnPos, Quaternion.identity, dad.transform);
+        SpawnPos.y += tileHeight*2f;
     }
-
-
-
-
-    private void SpawnHat(GameObject dad)
-    {
-        float xPos = Random.Range(-tileLenght, tileLenght);
-
-        SpawnPos.x += xPos;
-        SpawnPos.y += tileHeight;
-        Instantiate(hatPrefab, SpawnPos, Quaternion.identity, dad.transform);
-    }
-
-
-
-
-    private void SpawnJetPack(GameObject dad)
-    {
-        float xPos = Random.Range(-tileLenght, tileLenght);
-
-        SpawnPos.x += xPos;
-        SpawnPos.y += tileHeight * 2f;
-        Instantiate(jetPackPrefab, SpawnPos, Quaternion.identity, dad.transform);
-    }
-
-
 
 
 
