@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     private float monsterHeight = 0.27f;
 
     // starts spawning if doodle above SpawnPos.y-spawnLimit:
-    private Vector3 SpawnPos = new Vector3(0, 8f, 0);
+    private Vector3 SpawnPos = new Vector3(0, 7f, 0);
     private float spawnLimit = 4f;
 
     private bool isDead = false;
@@ -84,11 +84,11 @@ public class GameManager : MonoBehaviour
                 returnedTile = SpawnPlateform();
 
                 //Spawn Objects on tile depending on probability
-                if (Random.value < 0.1){
+                if (Random.value < 0.05){
                     SpawnObject(springPrefab,returnedTile);
-                }else if (Random.value < 0.1){
+                }else if (Random.value < 0.05){
                     SpawnObject(hatPrefab,returnedTile);
-                }else if (Random.value < 0.1){
+                }else if (Random.value < 0.05){
                     SpawnObject(jetPackPrefab,returnedTile);
                 }
             
@@ -117,15 +117,15 @@ public class GameManager : MonoBehaviour
                 if (Random.value <= 0.2)
                 {
                     returnedTile = SpawnMovingPlateform(difficulty);
-                    if (Random.value < 0.1)
+                    if (Random.value < 0.05)
                     {
                         SpawnObject(springPrefab,returnedTile);
                     }
-                    else if (Random.value < 0.1)
+                    else if (Random.value < 0.05)
                     {
                         SpawnObject(hatPrefab,returnedTile);
                     }
-                    else if (Random.value < 0.1)
+                    else if (Random.value < 0.05)
                     {
                         SpawnObject(jetPackPrefab,returnedTile);
                     }

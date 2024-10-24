@@ -202,6 +202,7 @@ public class PlayerControl : MonoBehaviour
             if (rb.velocity.y <= 0.2f)
             {
                 usedSpring = false;
+                rb.velocity = new Vector2(rb.velocity.x, 0);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 PlayJumpSound(); // Play sound when jumping
 
@@ -210,18 +211,18 @@ public class PlayerControl : MonoBehaviour
     }
 
 
-    void OnCollisionStay2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Platform"))
-        {
-            // If the player is falling or not moving upwards, apply jump force
-            if (rb.velocity.y <= 0.2f)
-            {
-                usedSpring = false;
-                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            }
-        }
-    }
+    // void OnCollisionStay2D(Collision2D other)
+    // {
+    //     if (other.gameObject.CompareTag("Platform"))
+    //     {
+    //         // If the player is falling or not moving upwards, apply jump force
+    //         if (rb.velocity.y <= 0.2f)
+    //         {
+    //             usedSpring = false;
+    //             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+    //         }
+    //     }
+    // }
 
 
     void OnTriggerStay2D(Collider2D other)
