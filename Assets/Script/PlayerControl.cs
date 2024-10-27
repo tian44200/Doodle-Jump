@@ -93,7 +93,7 @@ public class PlayerControl : MonoBehaviour
         {
 
             itemTimer -= Time.deltaTime;
-            if (itemTimer <= 0)
+            if (itemTimer <= 1.5f)
             {
                 hat.SetActive(false);
                 toolSource.Stop();  // Stop sound of hat
@@ -106,10 +106,7 @@ public class PlayerControl : MonoBehaviour
             {
                 jetPackAnimator.SetBool("endJetPack", true);
             }
-            if (itemTimer <= 0)
-            {
-                jetPack.SetActive(false);
-            }
+
         }
         // Apply velocity to the rigidbody to move the player
         rb.velocity = new Vector2(LeftRight, rb.velocity.y);
@@ -205,6 +202,7 @@ public class PlayerControl : MonoBehaviour
             if (rb.velocity.y <= 0.2f)
             {
                 usedSpring = false;
+                rb.velocity = new Vector2(rb.velocity.x, 0);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 PlayJumpSound(); // Play sound when jumping
 
@@ -213,18 +211,18 @@ public class PlayerControl : MonoBehaviour
     }
 
 
-    void OnCollisionStay2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Platform"))
-        {
-            // If the player is falling or not moving upwards, apply jump force
-            if (rb.velocity.y <= 0.2f)
-            {
-                usedSpring = false;
-                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            }
-        }
-    }
+    // void OnCollisionStay2D(Collision2D other)
+    // {
+    //     if (other.gameObject.CompareTag("Platform"))
+    //     {
+    //         // If the player is falling or not moving upwards, apply jump force
+    //         if (rb.velocity.y <= 0.2f)
+    //         {
+    //             usedSpring = false;
+    //             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+    //         }
+    //     }
+    // }
 
 
     void OnTriggerStay2D(Collider2D other)
@@ -283,7 +281,7 @@ public class PlayerControl : MonoBehaviour
     void HandleShooting()
     {
         // Trigger shooting when the up arrow is pressed
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && hat.activeSelf == false && jetPack.activeSelf == false)
         {
             animator.SetBool("isShooting", true);
             mouth.SetActive(true);
