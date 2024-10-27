@@ -32,6 +32,12 @@ public class GameManager : MonoBehaviour
     private float minBreakY = 0.5f;
     private float maxBreakY = 0.58f;
 
+    private float minBH = 1.4f;
+    private float maxBH = 1.55f;
+
+    private float minMonster = 0.6f;
+    private float maxMonster = 1.10f;
+
     //To have a random speed
     private float minSpeed = 0.7f;
     private float maxSpeed = 1.8f;
@@ -42,12 +48,11 @@ public class GameManager : MonoBehaviour
     private float screenWidth = 2.5f;
 
     //Black hole size
-    private float blackHolewidth = 0.68f;
-    private float blackHoleHeight = 2f;
+    private float blackHolewidth = 1.2f;
+    private float blackHoleHeight = 1.8f;
 
     //Monster size
-    private float monsterWidth = 0.80f;
-    private float monsterHeight = 0.27f;
+    private float monsterWidth = 1.20f;
 
     // starts spawning if doodle above SpawnPos.y-spawnLimit:
     private Vector3 SpawnPos = new Vector3(0, 7f, 0);
@@ -86,9 +91,9 @@ public class GameManager : MonoBehaviour
                 //Spawn Objects on tile depending on probability
                 if (Random.value < 0.05){
                     SpawnObject(springPrefab,returnedTile);
-                }else if (Random.value < 0.05){
+                }else if (Random.value < 0.04){
                     SpawnObject(hatPrefab,returnedTile);
-                }else if (Random.value < 0.05){
+                }else if (Random.value <0.03){
                     SpawnObject(jetPackPrefab,returnedTile);
                 }
             
@@ -97,23 +102,23 @@ public class GameManager : MonoBehaviour
                 {
                     if (Random.value < 0.1)
                     {
+                        SpawnMonster();
+                    }
+                    if (Random.value < 0.1)
+                    {
                         SpawnBlackHole();
                     }
 
-                    if (Random.value < 0.1)
-                    {
-                        SpawnMonster();
-                    }
                 }
 
 
-                if (Random.value <= 0.5)
+                if (Random.value <= 1)
                 {
                     SpawnBreakingPlateform();
                 }
 
 
-                //Spawn Objects on tile depending on probability
+                // Spawn Objects on tile depending on probability
                 if (Random.value <= 0.2)
                 {
                     returnedTile = SpawnMovingPlateform(difficulty);
@@ -125,7 +130,7 @@ public class GameManager : MonoBehaviour
                     {
                         SpawnObject(hatPrefab,returnedTile);
                     }
-                    else if (Random.value < 0.05)
+                    else if (Random.value < 0.03)
                     {
                         SpawnObject(jetPackPrefab,returnedTile);
                     }
@@ -193,7 +198,6 @@ public class GameManager : MonoBehaviour
         }
         
         Instantiate(prefab, SpawnPos, Quaternion.identity, dad.transform);
-        SpawnPos.y += tileHeight*2f;
     }
 
 
@@ -201,47 +205,54 @@ public class GameManager : MonoBehaviour
     private void SpawnBlackHole()
     {
         float xPos = Random.Range(-screenWidth + blackHolewidth, screenWidth - blackHolewidth);// +/- BlackHole width
-        float yPos = Random.Range(minBreakY, maxBreakY - blackHoleHeight);// +/- BlackHole Height
+        float yPos = Random.Range(minBH, maxBH);// +/- BlackHole Height
 
         SpawnPos.x = xPos;
-        SpawnPos.y += yPos + blackHoleHeight;
+        SpawnPos.y += minBH;
 
         GameObject bh = Instantiate(blackHolePrefab, SpawnPos, Quaternion.identity);
 
         //Spawn two tiles depending on the side of the blackHole
         if (SpawnPos.x >= 0)
         {
+            Vector3 tilePos = new Vector3();
             xPos = Random.Range(-screenWidth, SpawnPos.x - blackHolewidth);
-            SpawnPos.x = xPos;
-            SpawnPos.y = SpawnPos.y - blackHoleHeight * 0.25f;
-            Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
-            SpawnPos.y = SpawnPos.y + blackHoleHeight * 0.5f;
-            Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
+            tilePos.x = xPos;
+            tilePos.y = SpawnPos.y - blackHoleHeight * 0.25f;
+            Instantiate(tilePrefab, tilePos, Quaternion.identity);
+
+            xPos = Random.Range(-screenWidth, SpawnPos.x - blackHolewidth);
+            tilePos.x = xPos;
+            tilePos.y = tilePos.y + blackHoleHeight * 0.5f;
+            Instantiate(tilePrefab, tilePos, Quaternion.identity);
         }
-        else
-        {
+        else{
+            Vector3 tilePos= new Vector3();
             xPos = Random.Range(SpawnPos.x + blackHolewidth, screenWidth);
-            SpawnPos.x = xPos;
-            SpawnPos.y = SpawnPos.y - blackHoleHeight * 0.25f;
-            Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
-            SpawnPos.y = SpawnPos.y + blackHoleHeight * 0.5f;
-            Instantiate(tilePrefab, SpawnPos, Quaternion.identity);
+            tilePos.x = xPos;
+            tilePos.y = SpawnPos.y - blackHoleHeight * 0.25f;
+            Instantiate(tilePrefab, tilePos, Quaternion.identity);
+
+            xPos = Random.Range(SpawnPos.x + blackHolewidth, screenWidth);
+            tilePos.x = xPos;
+            tilePos.y = tilePos.y + blackHoleHeight * 0.5f;
+            Instantiate(tilePrefab, tilePos, Quaternion.identity);
 
         }
+
+        SpawnPos.y += blackHoleHeight*0.25f;
 
     }
 
 
 
-
-
     private void SpawnMonster()
     {
-        float xPos = Random.Range(-screenWidth + monsterWidth, screenWidth - monsterWidth);// +/- BlackHole width
-        float yPos = Random.Range(minBreakY, maxBreakY - monsterHeight);// +/- BlackHole Height
+        float xPos = Random.Range(-screenWidth + monsterWidth, screenWidth - monsterWidth);
+        float yPos = Random.Range(minMonster, maxMonster);
 
         SpawnPos.x = xPos;
-        SpawnPos.y += yPos + monsterHeight;
+        SpawnPos.y += yPos;
 
         GameObject mst = Instantiate(monsterPrefab, SpawnPos, Quaternion.identity);
 
