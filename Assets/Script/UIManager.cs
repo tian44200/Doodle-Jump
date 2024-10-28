@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour
                     scrollableObjects.Add(obj.transform); // Add their transforms to the list
                 }
             }
-
+    CleanSounds(); // Destroy all monsters
     StartCoroutine(SlideEndPageUp(colliderTag));
         // }
             
@@ -91,8 +91,8 @@ public class UIManager : MonoBehaviour
         // Once the end page reaches the top, pause the game
         endPageRect.anchoredPosition = Vector2.zero; // Ensure it's exactly at the top
         // Wait for 2 seconds in order to let doodle finish its fall
+        
         yield return new WaitForSeconds(2f);
-        CleanSounds(); // Destroy all monsters
         Time.timeScale = 0; // Optional: Pause the game
     }
 
@@ -102,7 +102,7 @@ public class UIManager : MonoBehaviour
         GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
         foreach (GameObject monst in monsters)
         {
-            Destroy(monst);
+            monst.GetComponent<AudioSource>().Stop(); // Stop the monster's sound
         }
     }
 
