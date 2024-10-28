@@ -180,8 +180,9 @@ public class PlayerControl : MonoBehaviour
     /***************************************/
     void HandleJumping()
     {
+        print(rb.velocity.y);
         // If the player is moving upwards, set isJumping to true
-        if (rb.velocity.y > 0.1f)
+        if (rb.velocity.y > 3f)
         {
             animator.SetBool("isJumping", true);
         }
