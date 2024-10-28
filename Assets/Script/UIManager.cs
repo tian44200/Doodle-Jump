@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
 {
     // UI Elements
     public GameObject endPagePanel; // Reference to the End Page Panel
-    // public Collider2D doodle; // Reference to the Doodle object
+    public GameObject doodle; // Reference to the Doodle object
 
     // Slide parameters
     public float slideSpeed = 1000f; // Speed at which the panel slides up
@@ -104,6 +104,7 @@ public class UIManager : MonoBehaviour
         {
             monst.GetComponent<AudioSource>().Stop(); // Stop the monster's sound
         }
+        doodle.GetComponent<PlayerControl>().StopToolSounds(); // Stop the doodle's tool sounds
     }
 
     // Method to go back to the main menu

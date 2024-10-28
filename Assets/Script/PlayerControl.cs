@@ -180,7 +180,6 @@ public class PlayerControl : MonoBehaviour
     /***************************************/
     void HandleJumping()
     {
-        print(rb.velocity.y);
         // If the player is moving upwards, set isJumping to true
         if (rb.velocity.y > 3f)
         {
@@ -388,6 +387,14 @@ public class PlayerControl : MonoBehaviour
         if (shootSound != null && attackSource != null)
         {
             attackSource.PlayOneShot(shootSound);
+        }
+    }
+
+    public void StopToolSounds()
+    {
+        if (toolSource != null)
+        {
+            toolSource.Stop();
         }
     }
 
