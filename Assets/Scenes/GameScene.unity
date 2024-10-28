@@ -3890,7 +3890,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7318822162454693950, guid: 46fbcb86bac01054d8650fcfdc2e535a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7671863611912687899, guid: 46fbcb86bac01054d8650fcfdc2e535a, type: 3}
       propertyPath: m_audioClip
@@ -3928,7 +3928,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2638356231026477088, guid: 6489e23b0539fd2448eaf3233042ad23, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6641751692471098490, guid: 6489e23b0539fd2448eaf3233042ad23, type: 3}
       propertyPath: jumpSound
