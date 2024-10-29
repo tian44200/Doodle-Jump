@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
                 }
 
 
-                if (Random.value <= 1)
+                if (Random.value <= 0.3)
                 {
                     SpawnBreakingPlateform();
                 }
