@@ -2053,7 +2053,7 @@ MonoBehaviour:
   jumpSource: {fileID: 1298075551}
   attackSource: {fileID: 1298075552}
   toolSource: {fileID: 1298075553}
-  moveSpeed: 8
+  moveSpeed: 6
   mouth: {fileID: 828596184}
   hat: {fileID: 251140497}
   hatTime: 3
@@ -3486,6 +3486,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endPagePanel: {fileID: 596144106}
+  doodle: {fileID: 1298075543}
   slideSpeed: 250
   scrollableTags:
   - Doodle
