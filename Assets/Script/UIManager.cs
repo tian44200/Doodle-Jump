@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement; // For scene management
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.Sqlite;
 using TMPro;
 
 /// <summary>
